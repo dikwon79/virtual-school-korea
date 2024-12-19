@@ -1,30 +1,25 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="bg-gray-100 h-screen flex items-center justify-center p-5">
-      <div
-        className="bg-white shadow-lg p-5 rounded-3xl w-full max-w-screen-sm flex flex-col md:flex-row gap-2
-      *:outline-none"
-      >
-        <input
-          className="w-full rounded-full h-10 bg-gray-200 pl-5 ring ring-transparent 
-          focus:ring-orange-500 focus:ring-offset-2 transition-shadow
-          placeholder:text-red-600 peer"
-          type="email"
-          required
-          placeholder="Search here..."
-        />
-        <span className="text-red-500 font-medium hidden peer-invalid:block ">
-          Email is required
-        </span>
-        <button
-          className="bg-black bg-opacity-70 text-white py-2 rounded-full active:scale-90 focus:scale-90 
-        transition-transform font-medium md:px-5 bg-grad"
-        >
-          Search
-        </button>
+    <div className="flex flex-col items-center justify-between min-h-screen p-6">
+      <div className="my-auto flex flex-col items-center gap-4 *:font-medium">
+        <span className="text-9xl">🎒</span>
+        <h1 className="text-4xl">Virtual School</h1>
+        <h2 className="text-2xl">버츄얼 스쿨에 어서오세요!</h2>
       </div>
-    </main>
+      <div className="flex flex-col items-center gap-3 w-full">
+        <Link href="/create-account" className="primary-btn py-2.5 text-lg">
+          시작하기
+        </Link>
+        <div className="flex gap-2">
+          <span>이미 계정이 있나요?</span>
+          <Link href="/login" className="hover:underline">
+            로그인
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 }
