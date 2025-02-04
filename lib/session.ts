@@ -1,9 +1,12 @@
 import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
 
+interface SessionContent {
+  id?: number;
+}
 export default async function getSession() {
-  return getIronSession(await cookies(), {
-    cookieName: "delicious-karror",
+  return getIronSession<SessionContent>(await cookies(), {
+    cookieName: "virtualschoolKorea",
     password: process.env.COOKIE_PASSWORD!,
   });
 }

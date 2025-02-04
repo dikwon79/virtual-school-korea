@@ -10,6 +10,7 @@ import bcrypt from "bcrypt";
 import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import getSession from "@/lib/session";
 
 const passwordRegex = PASSWORD_REGEX;
 const checkUsername = (username: string) => !username.includes("potato");
@@ -85,6 +86,7 @@ export async function createAccount(prevState: any, formData: FormData) {
     password: formData.get("password"),
     confirm_password: formData.get("confirm_password"),
   };
+
   const result = await formSchema.safeParseAsync(data); // parse를 쓰면 try catch문을 써야함 safeParse는 throw하지 않는다.
   if (!result.success) {
     return result.error.flatten(); //flatten을 쓰면 object가 간단해져서 사용하기 쉽다.
@@ -102,12 +104,8 @@ export async function createAccount(prevState: any, formData: FormData) {
         id: true,
       },
     });
-    const cookie = await getIronSession(await cookies(), {
-      cookieName: "delicious-karrot",
-      password: process.env.COOKIE_PASSWORD!,
-    });
+    const cookie = await getSession();
 
-    //@ts-ignore
     cookie.id = user.id;
     await cookie.save();
 

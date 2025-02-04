@@ -14,8 +14,6 @@
     hover:bg-orange-400 transition-colors;
   }
   .fullscreen-bg {
-    background-image: url("/images/main1.png"); /* 이미지 경로 */
-    background-size: cover; /* 화면에 꽉 차게 설정 */
     background-position: center; /* 이미지 중심으로 정렬 */
     background-repeat: no-repeat; /* 반복 금지 */
   }
