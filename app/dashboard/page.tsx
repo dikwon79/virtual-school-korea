@@ -16,7 +16,9 @@ export default function Profile() {
     <div className="flex flex-col items-center justify-start min-h-screen">
       {/* Hero Section (배경 이미지) */}
       <div className="w-full h-[91vh] flex flex-col justify-center items-center bg-cover bg-center text-white text-center px-10">
-        <h2 className="text-4xl mt-6">Profile: {user?.username || "Guest"}</h2>
+        <h2 className="text-4xl mt-6">
+          Dashboard: {user?.username || "Guest"}
+        </h2>
       </div>
     </div>
   );

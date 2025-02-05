@@ -6,16 +6,17 @@ import { useState, useRef, useEffect } from "react";
 import { logOut } from "@/app/api/logout/route";
 import { useAuth } from "@/app/context/AuthContext";
 import { useRouter } from "next/navigation";
-
+import { usePathname } from "next/navigation";
 export default function Header() {
   const { user, loading } = useAuth();
+  const [users, setUser] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-
+  const pathname = usePathname(); // ✅ 페이지 변경 감지
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 64) {
@@ -31,7 +32,7 @@ export default function Header() {
 
   useEffect(() => {
     console.log("router", user);
-  }, [user, loading, router]);
+  }, [user, pathname]); // ✅ URL이 변경될 때도 실행되도록 설정
 
   if (loading) {
     return <p>Loading...</p>;
