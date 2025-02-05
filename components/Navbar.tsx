@@ -1,13 +1,22 @@
+"use client";
+
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
+
+import { logOut } from "@/app/api/logout/route";
+import { useAuth } from "@/app/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
+  const { user, loading } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
-  const [isClient, setIsClient] = useState(false); // New state to track if it's client-side
+  const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   useEffect(() => {
-    setIsClient(true); // Mark that we're on the client side
     const handleScroll = () => {
       if (window.scrollY > 64) {
         setHasScrolled(true);
@@ -20,13 +29,12 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  useEffect(() => {
+    console.log("router", user);
+  }, [user, loading, router]);
 
-  // Only render on the client side to avoid hydration mismatch
-  if (!isClient) {
-    return null; // Or you could return a loading spinner or placeholder
+  if (loading) {
+    return <p>Loading...</p>;
   }
 
   return (
@@ -38,49 +46,10 @@ export default function Header() {
       <nav>
         <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
           <div className="relative flex h-16 justify-between">
-            {/* Mobile Hamburger Icon */}
-            <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-              <button
-                onClick={toggleMenu}
-                className="inline-flex items-center justify-center rounded-md p-2
-                  text-gray-400 transition duration-150 ease-in-out
-                  hover:bg-gray-100
-                  hover:text-gray-500
-                  focus:bg-gray-100
-                  focus:text-gray-500 focus:outline-none
-                  dark:hover:bg-gray-600
-                  dark:hover:text-gray-400
-                  dark:focus:bg-gray-600
-                  dark:focus:text-gray-400"
-              >
-                <svg
-                  className="h-6 w-6"
-                  stroke="currentColor"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    className={`inline-flex ${isMenuOpen ? "hidden" : "block"}`}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                  <path
-                    className={`inline-flex ${isMenuOpen ? "block" : "hidden"}`}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-
             {/* Logo */}
             <div className="flex items-center justify-center sm:items-stretch sm:justify-start">
               <div className="flex flex-shrink-0 items-center">
-                <a href="/">
+                <Link href="/">
                   <img
                     className="block h-8 w-auto lg:hidden"
                     src="/m.svg"
@@ -91,118 +60,81 @@ export default function Header() {
                     src="/m.svg"
                     alt="Logo"
                   />
-                </a>
+                </Link>
               </div>
             </div>
 
-            {/* Desktop Menu Links */}
+            {/* Navigation Links */}
             <div className="hidden sm:flex sm:ml-6 sm:space-x-8 sm:items-center sm:h-full">
-              <Link
-                href="/courses"
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-              >
-                Courses
-              </Link>
-              <Link
-                href="/quiz"
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-              >
-                QuizQuiz
-              </Link>
-              <Link
-                href="/reviews"
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-              >
-                Reviews 🔥
-              </Link>
-              <Link
-                href="/community"
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-              >
-                Community
-              </Link>
-              <Link
-                href="/faq"
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-              >
-                FAQ
-              </Link>
-              <Link
-                href="/roadmap"
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-              >
-                Roadmap
-              </Link>
+              {[
+                "Courses",
+                "Quiz",
+                "Reviews",
+                "Community",
+                "FAQ",
+                "Roadmap",
+              ].map((item) => (
+                <Link
+                  key={item}
+                  href={`/${item.toLowerCase()}`}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                >
+                  {item}
+                </Link>
+              ))}
             </div>
 
-            {/* Login and Join buttons aligned to the right */}
-            <div className="flex items-center ml-auto">
-              <a
-                className="mr-8 hidden items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium leading-5 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:text-gray-700 focus:outline-none sm:block dark:text-gray-400 dark:hover:text-gray-200"
-                href="/login"
-              >
-                Login
-              </a>
-              <div className="flex-shrink-0">
-                <a
-                  className="relative inline-flex items-center rounded-md border border-transparent bg-blue-600 px-8 py-2 text-sm font-medium leading-5 text-white shadow-sm transition duration-150 ease-in-out hover:bg-blue-500 focus:border-blue-700 focus:outline-none focus:ring focus:ring-blue-400 active:bg-blue-700 dark:border dark:border-white dark:bg-white dark:text-gray-700 dark:hover:bg-transparent dark:hover:text-white"
-                  href="/join"
-                >
-                  <span>Join</span>
-                </a>
-              </div>
+            {/* Login / Profile */}
+            <div className="ml-auto flex items-center">
+              {user?.username ? (
+                <div className="relative flex items-center">
+                  <button
+                    onClick={() => setIsAvatarMenuOpen(!isAvatarMenuOpen)}
+                  >
+                    <img
+                      className="h-8 w-8 rounded-full"
+                      src="/default-avatar.png"
+                      alt="User avatar"
+                    />
+                  </button>
+                  {isAvatarMenuOpen && (
+                    <div
+                      ref={dropdownRef}
+                      className="absolute right-0 top-12 z-50 mt-2 w-48 bg-white shadow-lg"
+                    >
+                      <Link
+                        href="/dashboard"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Dashboard
+                      </Link>
+                      <button
+                        onClick={logOut}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Sign out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className="mr-8 text-gray-500 hover:text-gray-700"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/join"
+                    className="bg-blue-600 px-8 py-2 text-white rounded-md hover:bg-blue-500"
+                  >
+                    Join
+                  </Link>
+                </>
+              )}
             </div>
           </div>
-
-          {/* Mobile Menu Links */}
-          {isMenuOpen && (
-            <div className="sm:hidden">
-              <div className="space-y-1 pb-4 pt-2">
-                <Link
-                  href="/login"
-                  className="block px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-300 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-gray-200"
-                >
-                  Login
-                </Link>
-                <Link
-                  href="/courses"
-                  className="block px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-300 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-gray-200"
-                >
-                  Courses
-                </Link>
-                <Link
-                  href="/challenges"
-                  className="block px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-300 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-gray-200"
-                >
-                  Challenges
-                </Link>
-                <Link
-                  href="/reviews"
-                  className="block px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-300 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-gray-200"
-                >
-                  Reviews 🔥
-                </Link>
-                <Link
-                  href="/community"
-                  className="block px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-300 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-gray-200"
-                >
-                  Community
-                </Link>
-                <Link
-                  href="/faq"
-                  className="block px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-300 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-gray-200"
-                >
-                  FAQ
-                </Link>
-                <Link
-                  href="/roadmap"
-                  className="block px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-300 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-gray-200"
-                >
-                  Roadmap
-                </Link>
-              </div>
-            </div>
-          )}
         </div>
       </nav>
     </header>

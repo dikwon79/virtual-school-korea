@@ -63,6 +63,8 @@ export async function login(prevState: any, formData: FormData) {
     if (ok) {
       const session = await getSession();
       session.id = user!.id;
+      await session.save(); // 세션 저장(쿠키에 반영)
+
       redirect("/profile");
     } else {
       return {

@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import { usePathname } from "next/navigation";
 import Header from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { AuthProvider } from "./context/AuthContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,9 +38,11 @@ export default function RootLayout({
             : "bg-[#111827] bg-cover h-screen"
         }`}
       >
-        <Header />
-        <div className="w-full">{children}</div>
-        <Footer />
+        <AuthProvider>
+          <Header />
+          <div className="w-full">{children}</div>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );
