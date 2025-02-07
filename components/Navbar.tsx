@@ -94,7 +94,7 @@ export default function Header() {
                   >
                     <img
                       className="h-8 w-8 rounded-full"
-                      src="/default-avatar.png"
+                      src="/images/members/default-avatar.jpeg"
                       alt="User avatar"
                     />
                   </button>
