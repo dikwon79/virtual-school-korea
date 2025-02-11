@@ -1,5 +1,7 @@
 "use client";
+import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
+import { PlusIcon } from "@heroicons/react/24/solid";
 
 export default function Profile() {
   const { user, loading } = useAuth(); // 사용자 정보와 로딩 상태를 가져옴
@@ -19,6 +21,14 @@ export default function Profile() {
         <h2 className="text-4xl mt-6">
           Dashboard: {user?.username || "Guest"}
         </h2>
+      </div>
+      <div>
+        <Link
+          href="/courses/add"
+          className="bg-orange-500 flex items-center justify-center rounded-full size-16 fixed bottom-24 right-8 text-white transition-colors hover:bg-orange-400"
+        >
+          <PlusIcon className="size-10" />
+        </Link>
       </div>
     </div>
   );
