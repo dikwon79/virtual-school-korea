@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../(auth)/context/AuthContext";
 import { PlusIcon } from "@heroicons/react/24/solid";
 
 export default function Profile() {

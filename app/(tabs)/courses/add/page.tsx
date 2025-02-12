@@ -4,14 +4,17 @@ import Button from "@/components/button";
 import Input from "@/components/input";
 import { PhotoIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { useActionState, useState } from "react";
-import { uploadProduct } from "./action";
+import { getUploadUrl, uploadProduct } from "./action";
 import { useFormState } from "react-dom";
 
 export default function AddCourse() {
   const [preview, setPreview] = useState("");
   const [lessons, setLessons] = useState([{ id: 1, title: "", videoUrl: "" }]);
 
-  const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const [uploadUrl, setUploadUrl] = useState("");
+  const [photoId, setphotoId] = useState("");
+
+  const onImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { files },
     } = event;
@@ -21,6 +24,13 @@ export default function AddCourse() {
     const file = files[0];
     const url = URL.createObjectURL(file);
     setPreview(url);
+    const { success, result } = await getUploadUrl();
+
+    if (success) {
+      const { id, uploadURL } = result;
+      setUploadUrl(uploadURL);
+      setphotoId(id);
+    }
   };
 
   // 📌 새 레슨 추가
@@ -49,25 +59,31 @@ export default function AddCourse() {
     );
   };
 
-  //   // 📌 폼 제출 핸들러
-  //   const handleSubmit = (e: React.FormEvent) => {
-  //     e.preventDefault();
-  //     const formData = new FormData(e.target as HTMLFormElement);
+  const interceptAction = async (_: any, formData: FormData) => {
+    //upload image to cloudFlare
 
-  //     // 레슨 데이터도 함께 추가
-  //     formData.append("lessons", JSON.stringify(lessons));
+    const file = formData.get("photo");
+    if (!file) {
+      return;
+    }
+    const cloudFlareForm = new FormData();
+    cloudFlareForm.append("file", file);
+    const response = await fetch(uploadUrl, {
+      method: "post",
+      body: cloudFlareForm,
+    });
+    if (response.status != 200) {
+      return;
+    }
+    //replace photo in formData
 
-  //     // 서버로 전송 (예제: fetch API)
-  //     fetch("/api/courses", {
-  //       method: "POST",
-  //       body: formData,
-  //     })
-  //       .then((res) => res.json())
-  //       .then((data) => console.log("Course created:", data))
-  //       .catch((err) => console.error("Error:", err));
-  //   };
+    const photoUrl = `https://imagedelivery.net/2gtCuGfa22HmLSsViP25ew/${photoId}`;
+    formData.set("photo", photoUrl);
+    return uploadProduct(_, formData);
+    //call upload product.
+  };
 
-  const [state, action] = useActionState(uploadProduct, null);
+  const [state, action] = useActionState(interceptAction, null);
   return (
     <div className="flex flex-col lg:flex-row gap-10 py-20 px-2 max-w-7xl mx-auto bg-black-50 rounded-lg shadow-lg">
       <form action={action} className="w-full flex flex-col lg:flex-row gap-10">

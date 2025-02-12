@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 
 import { logOut } from "@/app/api/logout/route";
-import { useAuth } from "@/app/context/AuthContext";
+import { useAuth } from "@/app/(auth)/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 export default function Header() {

@@ -29,34 +29,34 @@ export async function uploadProduct(_: any, formData: FormData) {
   // 📌 1. 사진 파일 가져오기
   const photo = formData.get("photo");
 
-  // 📌 2. 사진 검증 (이미지 타입 & 3MB 이하)
-  if (!(photo instanceof File)) {
-    throw new Error("이미지가 업로드되지 않았습니다.");
-  }
+  //   // 📌 2. 사진 검증 (이미지 타입 & 3MB 이하)
+  //   if (!(photo instanceof File)) {
+  //     throw new Error("이미지가 업로드되지 않았습니다.");
+  //   }
 
-  const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-  const maxSize = 3 * 1024 * 1024; // 3MB
+  //   const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+  //   const maxSize = 3 * 1024 * 1024; // 3MB
 
-  if (!allowedTypes.includes(photo.type)) {
-    throw new Error(
-      "허용되지 않은 이미지 형식입니다. (JPG, PNG, GIF, WEBP만 가능)"
-    );
-  }
+  //   if (!allowedTypes.includes(photo.type)) {
+  //     throw new Error(
+  //       "허용되지 않은 이미지 형식입니다. (JPG, PNG, GIF, WEBP만 가능)"
+  //     );
+  //   }
 
-  if (photo.size > maxSize) {
-    throw new Error("이미지 크기가 3MB를 초과할 수 없습니다.");
-  }
+  //   if (photo.size > maxSize) {
+  //     throw new Error("이미지 크기가 3MB를 초과할 수 없습니다.");
+  //   }
 
-  // 📌 3. 파일 저장 (서버의 `/public/images/courses/` 폴더에 저장)
-  const uploadDir = path.join(process.cwd(), "public", "images", "courses"); // 업로드 폴더 경로
-  await fs.mkdir(uploadDir, { recursive: true }); // 폴더 없으면 생성
+  //   // 📌 3. 파일 저장 (서버의 `/public/images/courses/` 폴더에 저장)
+  //   const uploadDir = path.join(process.cwd(), "public", "images", "courses"); // 업로드 폴더 경로
+  //   await fs.mkdir(uploadDir, { recursive: true }); // 폴더 없으면 생성
 
-  const uniqueFileName = `${Date.now()}-${photo.name}`; // 파일 이름 중복 방지
-  const photoPath = path.join(uploadDir, uniqueFileName);
-  const publicPhotoPath = `/images/courses/${uniqueFileName}`; // 웹에서 접근 가능한 경로
+  //   const uniqueFileName = `${Date.now()}-${photo.name}`; // 파일 이름 중복 방지
+  //   const photoPath = path.join(uploadDir, uniqueFileName);
+  //   const publicPhotoPath = `/images/courses/${uniqueFileName}`; // 웹에서 접근 가능한 경로
 
-  const photoData = await photo.arrayBuffer();
-  await fs.writeFile(photoPath, Buffer.from(photoData));
+  //   const photoData = await photo.arrayBuffer();
+  //   await fs.writeFile(photoPath, Buffer.from(photoData));
 
   // 📌 4. 레슨 데이터 가져오기
   const lessons = Array.from({ length: lessonCount }, (_, index) => ({
@@ -66,7 +66,7 @@ export async function uploadProduct(_: any, formData: FormData) {
 
   // 📌 5. 데이터 구조 정의 (photo를 파일 경로로 저장)
   const data = {
-    photo: publicPhotoPath, // 📌 DB에는 파일 경로만 저장
+    photo: formData.get("photo"),
     lessons,
     title: formData.get("title"),
     price: formData.get("price"),
@@ -114,4 +114,19 @@ export async function uploadProduct(_: any, formData: FormData) {
       redirect(`/courses/${course.id}`);
     }
   }
+}
+
+export async function getUploadUrl() {
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/images/v2/direct_upload`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.CLOUDFLARE_API_KEY}`,
+      },
+    }
+  );
+  const data = await response.json();
+
+  return data;
 }
