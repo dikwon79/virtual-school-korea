@@ -1,7 +1,4 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { notFound, useParams } from "next/navigation";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import db from "@/lib/db";
 import getSession from "@/lib/session";
@@ -62,7 +59,7 @@ export default async function CourseDetailPage({
     <div className="mx-auto max-w-4xl px-4 py-32">
       <div className="flex flex-col md:flex-row items-center md:items-start">
         <img
-          src={course.photo}
+          src={`${course.photo}/public`}
           alt={course.title}
           className="w-full md:w-1/2 h-64 object-cover rounded-lg shadow-lg"
         />
