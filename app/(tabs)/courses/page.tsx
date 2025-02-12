@@ -28,7 +28,6 @@ async function getCourses() {
 
 export default async function CoursesPage() {
   const courses = await getCourses();
-  console.log("cousse", courses);
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-32">

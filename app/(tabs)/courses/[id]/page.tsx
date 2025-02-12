@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import Link from "next/link";
+import db from "@/lib/db";
+import getSession from "@/lib/session";
 
 interface Course {
   id: number;
@@ -14,38 +16,60 @@ interface Course {
   tag?: string;
 }
 
-export default function CourseDetailPage() {
-  const { id } = useParams();
-  const [course, setCourse] = useState<Course | null>(null);
+async function getCourse(id: number) {
+  const course = await db.course.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      user: {
+        select: {
+          username: true,
+          avatar: true,
+        },
+      },
+    },
+  });
+  return course;
+}
+async function getIsOwner(userId: number) {
+  const session = await getSession();
+  if (session.id) {
+    return session.id === userId;
+  }
+  return false;
+}
 
-  // API 요청으로 데이터 가져오기
-  useEffect(() => {
-    // Next.js API에서 데이터 가져오기
-    async function fetchCourses() {
-      const response = await fetch("/api/lectures"); // API 엔드포인트 호출
-      const data: Course[] = await response.json(); // JSON 데이터를 Course 배열로 파싱
-      const foundCourse = data.find((course) => course.id === Number(id)); // ID에 해당하는 코스를 찾기
-      setCourse(foundCourse || null); // 상태 업데이트
-    }
+export default async function CourseDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const id = Number(params.id);
+  if (isNaN(id)) {
+    return notFound();
+  }
+  const course = await getCourse(id);
 
-    fetchCourses(); // 호출
-  }, [id]);
+  if (!course) {
+    return notFound();
+  }
 
-  if (!course)
-    return <p className="text-center text-gray-500">Course not found</p>;
+  const isOwner = await getIsOwner(course.userId);
+  //const [course, setCourse] = useState<Course | null>(null);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-32">
       <div className="flex flex-col md:flex-row items-center md:items-start">
         <img
-          src={course.image}
-          alt={course.name}
+          src={course.photo}
+          alt={course.title}
           className="w-full md:w-1/2 h-64 object-cover rounded-lg shadow-lg"
         />
         <div className="md:ml-8 mt-4 md:mt-0">
           {/* 코스 정보 */}
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
-            {course.name}
+            {course.title}
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
             {course.description}
