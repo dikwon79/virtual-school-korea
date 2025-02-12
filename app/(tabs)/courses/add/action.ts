@@ -8,11 +8,12 @@ import getSession from "@/lib/session";
 import { redirect } from "next/navigation";
 
 // 📌 Zod 스키마 수정
-const productSchema = z.object({
+const courseSchema = z.object({
   photo: z.string({ required_error: "Photo must be a string (file path)" }), // 📌 파일 경로 저장
   title: z.string({ required_error: "Title is required" }),
   description: z.string({ required_error: "Description is required" }),
   price: z.coerce.number({ required_error: "Price is required" }),
+  level: z.string({ required_error: "Level" }),
   lessons: z
     .array(
       z.object({
@@ -25,38 +26,6 @@ const productSchema = z.object({
 
 export async function uploadProduct(_: any, formData: FormData) {
   const lessonCount = parseInt(formData.get("lessonCount") as string, 10) || 0;
-
-  // 📌 1. 사진 파일 가져오기
-  const photo = formData.get("photo");
-
-  //   // 📌 2. 사진 검증 (이미지 타입 & 3MB 이하)
-  //   if (!(photo instanceof File)) {
-  //     throw new Error("이미지가 업로드되지 않았습니다.");
-  //   }
-
-  //   const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-  //   const maxSize = 3 * 1024 * 1024; // 3MB
-
-  //   if (!allowedTypes.includes(photo.type)) {
-  //     throw new Error(
-  //       "허용되지 않은 이미지 형식입니다. (JPG, PNG, GIF, WEBP만 가능)"
-  //     );
-  //   }
-
-  //   if (photo.size > maxSize) {
-  //     throw new Error("이미지 크기가 3MB를 초과할 수 없습니다.");
-  //   }
-
-  //   // 📌 3. 파일 저장 (서버의 `/public/images/courses/` 폴더에 저장)
-  //   const uploadDir = path.join(process.cwd(), "public", "images", "courses"); // 업로드 폴더 경로
-  //   await fs.mkdir(uploadDir, { recursive: true }); // 폴더 없으면 생성
-
-  //   const uniqueFileName = `${Date.now()}-${photo.name}`; // 파일 이름 중복 방지
-  //   const photoPath = path.join(uploadDir, uniqueFileName);
-  //   const publicPhotoPath = `/images/courses/${uniqueFileName}`; // 웹에서 접근 가능한 경로
-
-  //   const photoData = await photo.arrayBuffer();
-  //   await fs.writeFile(photoPath, Buffer.from(photoData));
 
   // 📌 4. 레슨 데이터 가져오기
   const lessons = Array.from({ length: lessonCount }, (_, index) => ({
@@ -71,15 +40,20 @@ export async function uploadProduct(_: any, formData: FormData) {
     title: formData.get("title"),
     price: formData.get("price"),
     description: formData.get("description"),
+    level: formData.get("level"),
   };
 
   // 📌 6. 데이터 검증
-  const results = productSchema.safeParse(data);
+  const results = courseSchema.safeParse(data);
+  console.log("ressult", results);
   if (!results.success) {
+    console.log("Validation Error:", results.error.flatten());
+
     return results.error.flatten();
   } else {
     // 📌 7. DB 저장 (photo에 경로 저장)
     const session = await getSession();
+    console.log("session test", session);
     if (session.id) {
       const course = await db.course.create({
         data: {
@@ -87,6 +61,7 @@ export async function uploadProduct(_: any, formData: FormData) {
           description: results.data.description,
           price: results.data.price,
           photo: results.data.photo, // 📌 `File` → `string` (경로)
+          level: results.data.level,
           user: {
             connect: { id: session.id },
           },
@@ -95,7 +70,7 @@ export async function uploadProduct(_: any, formData: FormData) {
           id: true,
         },
       });
-
+      console.log("test", course);
       // 📌 3. Lessons 개별 저장 (courseId 연결)
       await Promise.all(
         results.data.lessons.map((lesson, index) =>

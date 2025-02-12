@@ -5,7 +5,6 @@ import Input from "@/components/input";
 import { PhotoIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { useActionState, useState } from "react";
 import { getUploadUrl, uploadProduct } from "./action";
-import { useFormState } from "react-dom";
 
 export default function AddCourse() {
   const [preview, setPreview] = useState("");
@@ -135,6 +134,13 @@ export default function AddCourse() {
             required
             placeholder="자세한 설명"
             errors={state?.fieldErrors.description}
+          />
+          <Input
+            name="level"
+            type="text"
+            required
+            placeholder="수준"
+            errors={state?.fieldErrors.level}
           />
         </div>
 
