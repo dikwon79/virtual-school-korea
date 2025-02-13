@@ -42,9 +42,14 @@ export default async function CourseDetailPage({
 }: {
   params: { id: string };
 }) {
-  const id = Number(params.id);
+  // `params.id` 값을 가져와 숫자로 변환
+  const { id: idString } = await params;
+
+  const id = Number(idString);
+
+  // id가 유효하지 않은 경우 처리
   if (isNaN(id)) {
-    return notFound();
+    return notFound(); // 404 페이지로 리다이렉트
   }
   const course = await getCourse(id);
 

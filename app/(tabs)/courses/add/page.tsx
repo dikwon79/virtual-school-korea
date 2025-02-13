@@ -119,6 +119,7 @@ export default function AddCourse() {
             required
             placeholder="제목"
             type="text"
+            className="border-2 border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
             errors={state?.fieldErrors.title}
           />
           <Input
@@ -126,6 +127,7 @@ export default function AddCourse() {
             type="number"
             required
             placeholder="가격"
+            className="border-2 border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
             errors={state?.fieldErrors.price}
           />
           <Input
@@ -133,6 +135,7 @@ export default function AddCourse() {
             type="text"
             required
             placeholder="자세한 설명"
+            className="border-2 border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
             errors={state?.fieldErrors.description}
           />
           <Input
@@ -140,12 +143,13 @@ export default function AddCourse() {
             type="text"
             required
             placeholder="수준"
+            className="border-2 border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
             errors={state?.fieldErrors.level}
           />
         </div>
 
         {/* 🔹 오른쪽: 레슨 목록 */}
-        <div className="w-full lg:w-2/5 flex flex-col border-l border-gray-300 pl-6 *:text-white">
+        <div className="w-full lg:w-2/5 flex flex-col border-l border-gray-300 pl-6">
           <h3 className="text-lg font-semibold text-white">레슨 목록</h3>
 
           {/* 🔹 총 레슨 개수를 서버로 전송하기 위한 hidden input */}
@@ -163,6 +167,7 @@ export default function AddCourse() {
                 onChange={(e) =>
                   handleLessonChange(lesson.id, "title", e.target.value)
                 }
+                className="border-2 border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 name={`lessonTitle-${lesson.id}`}
               />
 
@@ -174,6 +179,7 @@ export default function AddCourse() {
                 onChange={(e) =>
                   handleLessonChange(lesson.id, "videoUrl", e.target.value)
                 }
+                className="border-2 border-gray-300 p-2 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 name={`lessonVideo-${lesson.id}`}
               />
 
