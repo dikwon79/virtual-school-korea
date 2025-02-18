@@ -80,9 +80,12 @@ export default async function CourseDetailPage({
             ${course.price}
           </p>
           {/* 구매 버튼 */}
-          <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-500">
-            Buy Now
-          </button>
+          <Link href={`/courses/${id}/checkout`}>
+            <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-500">
+              Buy Now
+            </button>
+          </Link>
+
           {/* 돌아가기 버튼 */}
           <Link
             href="/courses"
