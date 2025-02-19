@@ -20,6 +20,8 @@ model User {
   SMSToken   SMSToken[]
   Course     Course[]
   LiveStream LiveStream[]
+
+  Payment Payment[]
 }
 
 model SMSToken {
@@ -47,6 +49,8 @@ model Course {
 
   // Course와 Lesson 사이의 일대다 관계
   lessons Lesson[]
+
+  Payment Payment[]
 }
 
 model Lesson {
@@ -76,4 +80,21 @@ model LiveStream {
   updated_at DateTime @updatedAt
   user       User     @relation(fields: [userId], references: [id])
   userId     Int
+}
+
+model Payment {
+  id             Int      @id @default(autoincrement())
+  amount         Float // 결제 금액
+  method         String // 결제 수단 (예. "Credit Card", "PayPal")
+  transaction_id String   @unique // 거래 또는 영수증 번호
+  created_at     DateTime @default(now()) // 결제일
+  start_date     DateTime
+  end_date       DateTime
+  courseId       Int // 결제된 강좌
+  course         Course   @relation(fields: [courseId], references: [id])
+
+  userId Int // 결제한 사용자
+  user   User @relation(fields: [userId], references: [id])
+
+  updated_at DateTime @updatedAt
 }
