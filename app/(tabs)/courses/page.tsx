@@ -21,6 +21,13 @@ async function getCourses() {
       id: true,
       description: true,
       level: true,
+      Payment: {
+        // ✅ 코스와 연결된 결제 정보 가져오기
+        select: {
+          start_date: true,
+          end_date: true,
+        },
+      },
     },
   });
   return courses;

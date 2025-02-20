@@ -26,26 +26,16 @@ export default function RootLayout({
   const pathname = usePathname();
 
   const isHomePage = pathname === "/";
-  const isInLectures =
-    pathname.split("/").includes("lectures") && pathname.split("/").length > 4;
-  console.log(isInLectures);
 
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${
-          geistMono.variable
-        } antialiased fullscreen-bg  ${
-          isHomePage
-            ? "bg-[url('/images/main1.png')]  bg-cover h-screen"
+        className={`${geistSans.variable} ${geistMono.variable} antialiased fullscreen-bg 
             : "bg-[#111827] bg-cover h-screen"
         }`}
       >
         <AuthProvider>
-          {!isInLectures && <Header />}
-
           <div className="w-full">{children}</div>
-          {!isInLectures && <Footer />}
         </AuthProvider>
       </body>
     </html>
