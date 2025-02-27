@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 
 import dynamic from "next/dynamic";
+import { useParams } from "next/navigation";
 
 // "ReactPlayer"를 dynamic import합니다.
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
@@ -20,8 +21,12 @@ export default function LecturePlayer({
   courseTitle: string;
   lessons: Lesson[];
 }) {
+  const obj = useParams();
+
+  const lesson = lessons.find((lesson) => lesson.id === Number(obj.lessonid));
+
   const [selectedLesson, setSelectedLesson] = useState<Lesson>(
-    lessons?.[0] || { id: 0, title: "", videoUrl: "", order: 0 }
+    lesson || { id: 0, title: "", videoUrl: "", order: 0 }
   );
   const [isSidebarVisible, setSidebarVisibility] = useState(true);
 
