@@ -9,11 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@eyevinn/webrtc-player": "^0.13.0",
+    "@eyevinn/whip-web-client": "^1.1.2",
     "@heroicons/react": "^2.2.0",
     "@prisma/client": "^6.1.0",
     "@tosspayments/tosspayments-sdk": "^2.3.4",
     "@types/bcrypt": "^5.0.2",
     "bcrypt": "^5.1.1",
+    "hls.js": "^1.5.20",
     "iron-session": "^8.0.4",
     "next": "15.1.0",
     "prisma": "^6.1.0",

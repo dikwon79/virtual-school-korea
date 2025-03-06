@@ -56,9 +56,6 @@ async function getStreamVideo(): Promise<Video[]> {
 export default async function Live() {
   const videos = await getStreamVideo();
 
-  // 디버깅: API 응답 데이터 확인
-  console.log("Videos:", videos);
-
   return (
     <div className="mx-auto max-w-7xl px-6 py-32">
       <h1 className="text-3xl font-bold text-gray-800 dark:text-white text-center mb-8">
