@@ -27,8 +27,6 @@ export default function Broadcast() {
           opts: {
             noTrickleIce: true, // Disable Trickle ICE
             debug: true, // Optional: Enable debug logs
-            authkey:
-              "5c4cc7b188a36466d761b353cfc7219ckd7cc0c09c57d687ae6d59025761ebfd9", // Replace with your authorization key if required
           },
         });
 
@@ -52,9 +50,16 @@ export default function Broadcast() {
   }, []);
 
   return (
-    <div>
-      <h1>Live Broadcast</h1>
-      <video ref={videoRef} autoPlay muted playsInline />
+    <div className="flex items-center justify-center min-h-screen bg-gray-800">
+      <div className="text-center">
+        <h1 className="text-white text-3xl mb-4">Live Broadcast</h1>
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          className="max-w-lg border border-gray-300 rounded-lg"
+        />
+      </div>
     </div>
   );
 }
