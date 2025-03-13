@@ -37,7 +37,7 @@ export default function Broadcast() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [room, setRoom] = useState<Room | null>(null);
   const [loading, setLoading] = useState(true);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[] | null>(null); // 초기 상태를 null로 설정
   const [user, setUser] = useState<User>(null);
   // Check if query.id is available before fetching the room data
 
@@ -172,8 +172,12 @@ export default function Broadcast() {
         <div className="w-1/2 flex flex-col p-4">
           {/* 채팅 메시지 박스 */}
           <div className="flex-1 bg-gray-700 p-4 rounded-lg overflow-y-auto border border-gray-600 h-[450px]">
-            {user && (
-              <ChatMessagesList userId={user.id} initialMessages={messages} />
+            {messages === null ? (
+              <div className="text-white text-center">Loading messages...</div>
+            ) : (
+              user && (
+                <ChatMessagesList userId={user.id} initialMessages={messages} />
+              )
             )}
           </div>
 
