@@ -1,5 +1,3 @@
-import { InitialChatMessages } from "@/app/api/chatRoom/[id]/messages/route";
-import { ArrowUpCircleIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { useState } from "react";
 import { formatToTimeAgo } from "@/lib/utils";
@@ -24,20 +22,10 @@ export default function ChatMessagesList({
   userId,
 }: ChatMessageListProps) {
   const [messages, setMessages] = useState(initialMessages);
-  const [message, setMessage] = useState("");
-  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const {
-      target: { value },
-    } = event;
-    setMessage(value);
-  };
-  const onSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    alert(message);
-    setMessage("");
-  };
+
+  console.log("component", initialMessages);
   return (
-    <div className="p-5 flex flex-col gap-5 min-h-screen justify-end">
+    <div className="p-5 flex flex-col gap-5 justify-end text-white">
       {messages.map((message) => (
         <div
           key={message.id}
@@ -72,20 +60,6 @@ export default function ChatMessagesList({
           </div>
         </div>
       ))}
-      <form className="flex relative" onSubmit={onSubmit}>
-        <input
-          required
-          onChange={onChange}
-          value={message}
-          className="bg-transparent rounded-full w-full h-10 focus:outline-none px-5 ring-2 focus:ring-4 transition ring-neutral-200 focus:ring-neutral-50 border-none placeholder:text-neutral-400"
-          type="text"
-          name="message"
-          placeholder="Write a message..."
-        />
-        <button className="absolute right-0">
-          <ArrowUpCircleIcon className="size-10 text-orange-500 transition-colors hover:text-orange-300" />
-        </button>
-      </form>
     </div>
   );
 }

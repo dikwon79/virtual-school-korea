@@ -5,9 +5,8 @@ import { useParams } from "next/navigation";
 import { WHIPClient } from "@eyevinn/whip-web-client";
 import { notFound } from "next/navigation";
 
-import db from "@/lib/db";
 import ChatMessagesList from "@/components/chat-messages-list";
-import getSession from "@/lib/session";
+import ChatMessagebtn from "@/components/chat-messages-button";
 
 const WHIP_URL = `https://customer-yx9m95cz62ztzi3v.cloudflarestream.com/5c4cc7b188a36466d761b353cfc7219ckd7cc0c09c57d687ae6d59025761ebfd9/webRTC/publish`;
 
@@ -42,6 +41,9 @@ export default function Broadcast() {
   const [user, setUser] = useState<User>(null);
   // Check if query.id is available before fetching the room data
 
+  if (!query.id) return; // Ensure that query.id is available
+  const roomId = query.id as string; // Ensure TypeScript knows it's a string
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -60,16 +62,13 @@ export default function Broadcast() {
   }, []);
 
   useEffect(() => {
-    if (!query.id) return; // Ensure that query.id is available
-    const roomId = query.id as string; // Ensure TypeScript knows it's a string
-
     const fetchMessages = async (roomId: string) => {
       try {
         const res = await fetch(`/api/chatRoom/${roomId}/messages`);
         if (res.ok) {
           const data = await res.json();
           setMessages(data);
-          console.log(messages);
+          console.log("msg", data);
         } else {
           console.error("Failed to fetch messages");
         }
@@ -77,10 +76,12 @@ export default function Broadcast() {
         console.error("Error fetching messages:", error);
       }
     };
-
+    fetchMessages(roomId);
+  }, []);
+  useEffect(() => {
     const fetchRoom = async () => {
       try {
-        const res = await fetch(`/api/chatRoom/${query.id}`);
+        const res = await fetch(`/api/chatRoom/${roomId}`);
 
         const data = await res.json();
         if (res.ok) {
@@ -97,7 +98,6 @@ export default function Broadcast() {
     };
 
     fetchRoom();
-    fetchMessages(roomId); // roomId를 인자로 전달
   }, [query.id]); // Dependency on query.id
 
   useEffect(() => {
@@ -153,17 +153,41 @@ export default function Broadcast() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-800">
-      <div className="text-center">
-        <h1 className="text-white text-3xl mb-4">Live Broadcast</h1>
-        <video
-          ref={videoRef}
-          autoPlay
-          playsInline
-          className="max-w-lg border border-gray-300 rounded-lg"
-        />
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 p-6 pt-20">
+      {/* 제목 */}
+      <h1 className="text-white text-2xl mb-6">Live Broadcast</h1>
+      {/* 전체 박스 */}
+      <div className="w-full max-w-5xl h-[400px] bg-gray-800 border border-gray-600 rounded-lg flex overflow-hidden">
+        {/* 왼쪽: 비디오 영역 */}
+        <div className="w-1/2 flex flex-col items-center justify-center p-4 border-r border-gray-600">
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            className="border border-gray-300 rounded-lg"
+          />
+        </div>
+
+        {/* 오른쪽: 채팅 영역 */}
+        <div className="w-1/2 flex flex-col p-4">
+          {/* 채팅 메시지 박스 */}
+          <div className="flex-1 bg-gray-700 p-4 rounded-lg overflow-y-auto border border-gray-600 h-[450px]">
+            {user && (
+              <ChatMessagesList userId={user.id} initialMessages={messages} />
+            )}
+          </div>
+
+          {/* 채팅 입력창 */}
+          <div className="mt-4">
+            <ChatMessagebtn />
+            {/* <input
+              type="text"
+              placeholder="Type a message..."
+              className="w-full p-2 rounded-lg bg-gray-900 text-white border border-gray-600"
+            /> */}
+          </div>
+        </div>
       </div>
-      {user && <ChatMessagesList userId={user.id} initialMessages={messages} />}
     </div>
   );
 }

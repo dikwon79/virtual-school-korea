@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import db from "@/lib/db";
 import { Prisma } from "@prisma/client";
 
-//export type InitialChatMessages = Prisma.PromiseReturnType<typeof GETmessages>;
+export type InitialChatMessages = Prisma.PromiseReturnType<typeof GET>;
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url); // req.url에서 URL 객체 생성
