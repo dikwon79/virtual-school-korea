@@ -1,6 +1,7 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { formatToTimeAgo } from "@/lib/utils";
+import { createClient, RealtimeChannel } from "@supabase/supabase-js";
 
 type Message = {
   id: string;
@@ -14,16 +15,15 @@ type Message = {
 };
 
 type ChatMessageListProps = {
-  initialMessages: Message[];
+  messages: Message[];
   userId: number;
 };
 export default function ChatMessagesList({
-  initialMessages,
+  messages,
   userId,
 }: ChatMessageListProps) {
-  const [messages, setMessages] = useState(initialMessages);
+  console.log("component", messages);
 
-  console.log("component", initialMessages);
   return (
     <div className="p-5 flex flex-col gap-5 justify-end text-white">
       {messages.map((message) => (

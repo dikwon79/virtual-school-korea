@@ -1,8 +1,43 @@
 import { ArrowUpCircleIcon } from "@heroicons/react/24/solid";
-import { useState } from "react";
+import { createClient, RealtimeChannel } from "@supabase/supabase-js";
+import { useEffect, useRef, useState } from "react";
 
-export default function ChatMessagebtn() {
+const SUPABASE_PUBLIC_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNtaGFncGNveXZnZ3Vya2tmenJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIwOTM4OTQsImV4cCI6MjA1NzY2OTg5NH0.KzaUbNfRiW87w_-7byhQqqYIgtH9pIR91bDiaeMxFpo";
+
+const SUPABASE_URL = "https://cmhagpcoyvggurkkfzrq.supabase.co";
+type ChatMessagebtnProps = {
+  chatRoomId: string;
+
+  onSendMessage: (message: {
+    id: string;
+    payload: string;
+    created_at: string;
+    userId: number;
+    user: { avatar: string | null; username: string };
+  }) => void;
+};
+
+export default function ChatMessagebtn({
+  onSendMessage,
+  chatRoomId,
+}: ChatMessagebtnProps) {
   const [message, setMessage] = useState("");
+
+  const channel = useRef<RealtimeChannel | null>(null);
+
+  useEffect(() => {
+    const client = createClient(SUPABASE_URL, SUPABASE_PUBLIC_KEY);
+    channel.current = client.channel(`room-${chatRoomId}`);
+    channel.current
+      .on("broadcast", { event: "message" }, (payload) => {
+        console.log(payload);
+      })
+      .subscribe();
+    return () => {
+      channel.current?.unsubscribe();
+    };
+  }, [chatRoomId]);
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { value },
@@ -11,7 +46,22 @@ export default function ChatMessagebtn() {
   };
   const onSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    alert(message);
+    const newMessage = {
+      id: Date.now().toString(), // 임시 ID
+      payload: message,
+      created_at: new Date().toISOString(),
+      userId: 1, // 현재 로그인한 유저 ID (예시)
+      user: {
+        avatar: "/default-avatar.png",
+        username: "You",
+      },
+    };
+    onSendMessage(newMessage); // 부모의 setMessages 호출
+    channel.current?.send({
+      type: "broadcast",
+      event: "message",
+      payload: { message },
+    });
     setMessage("");
   };
 

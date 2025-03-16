@@ -175,15 +175,19 @@ export default function Broadcast() {
             {messages === null ? (
               <div className="text-white text-center">Loading messages...</div>
             ) : (
-              user && (
-                <ChatMessagesList userId={user.id} initialMessages={messages} />
-              )
+              user && <ChatMessagesList userId={user.id} messages={messages} />
             )}
           </div>
 
           {/* 채팅 입력창 */}
           <div className="mt-4">
-            <ChatMessagebtn />
+            <ChatMessagebtn
+              chatRoomId={roomId}
+              onSendMessage={(newMessage) =>
+                setMessages((prev) => [...(prev ?? []), newMessage])
+              }
+            />
+
             {/* <input
               type="text"
               placeholder="Type a message..."
