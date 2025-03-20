@@ -10,6 +10,10 @@ export async function getUser() {
       where: {
         id: session.id,
       },
+      select: {
+        username: true,
+        avatar: true,
+      },
     });
     return user;
   }

@@ -17,10 +17,14 @@ type Message = {
 type ChatMessageListProps = {
   messages: Message[];
   userId: number;
+  username: string;
+  avatar: string;
 };
 export default function ChatMessagesList({
   messages,
   userId,
+  username,
+  avatar,
 }: ChatMessageListProps) {
   console.log("component", messages);
 
@@ -35,7 +39,7 @@ export default function ChatMessagesList({
         >
           {message.userId === userId ? null : (
             <Image
-              src={message.user.avatar!}
+              src={message.user.avatar || "/images/members/default-avatar.jpeg"}
               alt={message.user.username}
               width={50}
               height={50}

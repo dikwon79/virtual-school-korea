@@ -8,6 +8,9 @@ const SUPABASE_PUBLIC_KEY =
 const SUPABASE_URL = "https://cmhagpcoyvggurkkfzrq.supabase.co";
 type ChatMessagebtnProps = {
   chatRoomId: string;
+  userId: number;
+  username: string;
+  avatar: string;
 
   onSendMessage: (message: {
     id: string;
@@ -21,6 +24,9 @@ type ChatMessagebtnProps = {
 export default function ChatMessagebtn({
   onSendMessage,
   chatRoomId,
+  userId,
+  username,
+  avatar,
 }: ChatMessagebtnProps) {
   const [message, setMessage] = useState("");
 
@@ -31,7 +37,10 @@ export default function ChatMessagebtn({
     channel.current = client.channel(`room-${chatRoomId}`);
     channel.current
       .on("broadcast", { event: "message" }, (payload) => {
-        console.log(payload);
+        console.log("📩 Received payload:", payload);
+        console.log("📩 Received payload.payload:", payload.payload); // 내부 데이터 확인
+
+        onSendMessage(payload.payload);
       })
       .subscribe();
     return () => {
@@ -46,21 +55,31 @@ export default function ChatMessagebtn({
   };
   const onSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    console.log("test", userId);
     const newMessage = {
       id: Date.now().toString(), // 임시 ID
       payload: message,
       created_at: new Date().toISOString(),
-      userId: 1, // 현재 로그인한 유저 ID (예시)
+      userId,
       user: {
-        avatar: "/default-avatar.png",
-        username: "You",
+        avatar,
+        username,
       },
     };
     onSendMessage(newMessage); // 부모의 setMessages 호출
     channel.current?.send({
       type: "broadcast",
       event: "message",
-      payload: { message },
+      payload: {
+        id: Date.now(),
+        payload: message,
+        created_at: new Date(),
+        userId,
+        user: {
+          avatar,
+          username,
+        },
+      },
     });
     setMessage("");
   };

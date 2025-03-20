@@ -28,8 +28,8 @@ type Message = {
 };
 type User = {
   id: number;
-  name: string;
-  email: string;
+  username: string;
+  avatar: string;
 } | null;
 
 export default function Broadcast() {
@@ -100,6 +100,14 @@ export default function Broadcast() {
     fetchRoom();
   }, [query.id]); // Dependency on query.id
 
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
   useEffect(() => {
     if (!room) return;
 
@@ -151,7 +159,7 @@ export default function Broadcast() {
   if (!room) {
     return <div>Room not found.</div>;
   }
-
+  console.log(user);
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 p-6 pt-20">
       {/* 제목 */}
@@ -171,22 +179,37 @@ export default function Broadcast() {
         {/* 오른쪽: 채팅 영역 */}
         <div className="w-1/2 flex flex-col p-4">
           {/* 채팅 메시지 박스 */}
-          <div className="flex-1 bg-gray-700 p-4 rounded-lg overflow-y-auto border border-gray-600 h-[450px]">
+          <div
+            ref={chatContainerRef}
+            className="flex-1 bg-gray-700 p-4 rounded-lg overflow-y-auto border border-gray-600 h-[450px]"
+          >
             {messages === null ? (
               <div className="text-white text-center">Loading messages...</div>
             ) : (
-              user && <ChatMessagesList userId={user.id} messages={messages} />
+              user && (
+                <ChatMessagesList
+                  userId={user.id}
+                  username={user.username}
+                  avatar={user.avatar}
+                  messages={messages}
+                />
+              )
             )}
           </div>
 
           {/* 채팅 입력창 */}
           <div className="mt-4">
-            <ChatMessagebtn
-              chatRoomId={roomId}
-              onSendMessage={(newMessage) =>
-                setMessages((prev) => [...(prev ?? []), newMessage])
-              }
-            />
+            {user && (
+              <ChatMessagebtn
+                userId={user.id}
+                chatRoomId={roomId}
+                username={user.username}
+                avatar={user.avatar}
+                onSendMessage={(newMessage) =>
+                  setMessages((prev) => [...(prev ?? []), newMessage])
+                }
+              />
+            )}
 
             {/* <input
               type="text"
