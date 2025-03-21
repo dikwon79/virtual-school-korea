@@ -45,7 +45,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ webRtcUrl }) => {
         autoPlay
         muted
         playsInline
-        className="max-w-lg border border-gray-300 rounded-lg"
+        className="border border-gray-300 rounded-lg"
       ></video>
       <button
         className="text-white bg-slate-600 hover:bg-slate-700 py-2 px-4 mt-3 rounded-lg shadow-lg flex justify-center items-center transition-all duration-200 ease-in-out"

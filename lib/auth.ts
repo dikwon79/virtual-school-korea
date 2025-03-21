@@ -11,6 +11,7 @@ export async function getUser() {
         id: session.id,
       },
       select: {
+        id: true,
         username: true,
         avatar: true,
       },

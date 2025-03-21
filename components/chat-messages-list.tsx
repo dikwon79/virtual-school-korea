@@ -53,7 +53,7 @@ export default function ChatMessagesList({
           >
             <span
               className={`${
-                message.userId === userId ? "bg-neutral-500" : "bg-orange-500"
+                message.userId !== userId ? "bg-neutral-500" : "bg-orange-500"
               } p-2.5 rounded-md`}
             >
               {message.payload}
