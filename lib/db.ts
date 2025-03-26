@@ -1,19 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 
-const db = new PrismaClient();
+// const db = new PrismaClient();
 
-async function test() {
-  const token = await db.sMSToken.findUnique({
-    where: {
-      id: 1,
-    },
-    include: {
-      user: true,
-    },
-  });
-  console.log(token);
-}
+// export default db;
 
-test();
+const globalForPrisma = global as unknown as { prisma?: PrismaClient };
+
+const db = globalForPrisma.prisma || new PrismaClient();
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
 
 export default db;
