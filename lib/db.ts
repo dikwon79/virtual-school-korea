@@ -1,7 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-declare global {
-  let db: PrismaClient | undefined;
-}
+
 // const db = new PrismaClient();
 
 // export default db;
