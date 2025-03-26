@@ -1,5 +1,7 @@
+"use client";
 import ListCourse from "@/components/list-course";
-import db from "@/lib/db";
+import { useEffect, useState } from "react";
+
 interface Course {
   id: number;
   title: string;
@@ -13,53 +15,29 @@ interface Course {
   }[];
 }
 
-interface CoursesPageProps {
-  courses: Course[]; // Array of Course objects
-}
-// Fetch courses with error handling
-async function getCourses() {
-  try {
-    const courses = await db.course.findMany({
-      select: {
-        title: true,
-        price: true,
-        created_at: true,
-        photo: true,
-        id: true,
-        description: true,
-        level: true,
-        Payment: {
-          select: {
-            start_date: true,
-            end_date: true,
-          },
-        },
-      },
-    });
-    return courses;
-  } catch (error) {
-    console.error("Error fetching courses:", error);
-    return [];
-  }
-}
+export default function CoursesPage() {
+  const [courses, setCourses] = useState([]);
 
-export async function getStaticProps() {
-  const courses = await getCourses();
-  return {
-    props: {
-      courses,
-    },
-  };
-}
+  useEffect(() => {
+    async function fetchCourses() {
+      try {
+        const res = await fetch("/api/courses"); // API 호출
+        const data = await res.json();
+        setCourses(data);
+      } catch (error) {
+        console.error("Failed to fetch courses:", error);
+      }
+    }
+    fetchCourses();
+  }, []);
 
-export default function CoursesPage({ courses }: CoursesPageProps) {
   return (
     <div className="mx-auto max-w-7xl px-6 py-32">
       <h1 className="text-3xl font-bold text-gray-800 dark:text-white text-center mb-8">
         Courses
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-        {courses.map((course) => (
+        {courses.map((course: Course) => (
           <ListCourse completionRate={0} key={course.id} {...course} />
         ))}
       </div>
