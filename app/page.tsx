@@ -77,6 +77,8 @@ export default function Home() {
                   <Image
                     src={lecture.image}
                     alt={lecture.title}
+                    width={100}
+                    height={100}
                     className="w-full h-52 object-fill"
                   />
 
