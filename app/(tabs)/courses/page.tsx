@@ -1,41 +1,58 @@
 import ListCourse from "@/components/list-course";
 import db from "@/lib/db";
-
-// interface Course {
-//   id: number;
-//   title: string;
-//   price: number;
-//   image: string;
-//   description: string;
-//   level: "초급" | "중급" | "고급";
-//   tag?: string;
-// }
-
-async function getCourses() {
-  const courses = await db.course.findMany({
-    select: {
-      title: true,
-      price: true,
-      created_at: true,
-      photo: true,
-      id: true,
-      description: true,
-      level: true,
-      Payment: {
-        // ✅ 코스와 연결된 결제 정보 가져오기
-        select: {
-          start_date: true,
-          end_date: true,
-        },
-      },
-    },
-  });
-  return courses;
+interface Course {
+  id: number;
+  title: string;
+  price: number;
+  photo: string;
+  description: string;
+  level: "초급" | "중급" | "고급";
+  Payment: {
+    start_date: Date;
+    end_date: Date;
+  }[];
 }
 
-export default async function CoursesPage() {
-  const courses = await getCourses();
+interface CoursesPageProps {
+  courses: Course[]; // Array of Course objects
+}
+// Fetch courses with error handling
+async function getCourses() {
+  try {
+    const courses = await db.course.findMany({
+      select: {
+        title: true,
+        price: true,
+        created_at: true,
+        photo: true,
+        id: true,
+        description: true,
+        level: true,
+        Payment: {
+          select: {
+            start_date: true,
+            end_date: true,
+          },
+        },
+      },
+    });
+    return courses;
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    return [];
+  }
+}
 
+export async function getStaticProps() {
+  const courses = await getCourses();
+  return {
+    props: {
+      courses,
+    },
+  };
+}
+
+export default function CoursesPage({ courses }: CoursesPageProps) {
   return (
     <div className="mx-auto max-w-7xl px-6 py-32">
       <h1 className="text-3xl font-bold text-gray-800 dark:text-white text-center mb-8">
