@@ -58,7 +58,7 @@ export default function AddCourse() {
     );
   };
 
-  const interceptAction = async (_: any, formData: FormData) => {
+  const interceptAction = async (_: unknown, formData: FormData) => {
     //upload image to cloudFlare
 
     const file = formData.get("photo");

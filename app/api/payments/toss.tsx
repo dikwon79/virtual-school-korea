@@ -1,11 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-interface ConfirmResponse {
-  orderId: string;
-  paymentKey: string;
-  amount: number;
-}
-
 export default async function toss(req: NextApiRequest, res: NextApiResponse) {
   const { orderId, paymentKey, amount } = req.query;
   const secretKey = process.env.TOSS_SECRET_KEY;

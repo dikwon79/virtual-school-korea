@@ -1,18 +1,28 @@
+"use client"; // Mark this component as client-side
 import { notFound } from "next/navigation";
+import { useParams } from "next/navigation";
+import { useState, useEffect } from "react"; // Import useState and useEffect
 import Link from "next/link";
 import db from "@/lib/db";
-import getSession from "@/lib/session";
-
+import Image from "next/image";
 interface Course {
   id: number;
-  name: string;
+  title: string;
   price: number;
-  image: string;
+  photo: string;
   description: string;
-  level: "초급" | "중급" | "고급";
-  tag?: string;
+  level: string;
+  created_at: Date; // Prisma DateTime is mapped to JavaScript Date type
+  updated_at: Date;
+  userId: number;
+  user: {
+    // User relation (nested object)
+    username: string;
+    avatar: string | null;
+  };
 }
 
+// Fetch course data
 async function getCourse(id: number) {
   const course = await db.course.findUnique({
     where: {
@@ -29,47 +39,53 @@ async function getCourse(id: number) {
   });
   return course;
 }
-async function getIsOwner(userId: number) {
-  const session = await getSession();
-  if (session.id) {
-    return session.id === userId;
+
+export default function CourseDetailPage() {
+  const query = useParams();
+  const id = Number(query.id); // Get the course id from params and convert to number
+
+  const [course, setCourse] = useState<Course | null>(null); // State to store the course data
+  const [loading, setLoading] = useState(true); // State to handle loading status
+
+  useEffect(() => {
+    const fetchCourse = async () => {
+      if (isNaN(id)) {
+        notFound(); // If 'id' is invalid, return not found
+        return;
+      }
+
+      const courseData = await getCourse(id);
+      if (!courseData) {
+        notFound(); // If no course found, return not found
+      } else {
+        setCourse(courseData); // Set course data in state
+      }
+      setLoading(false); // Set loading to false after fetching data
+    };
+
+    fetchCourse();
+  }, [id]); // Re-run when `id` changes
+
+  if (loading) {
+    return <div>Loading...</div>; // Optionally display a loading state
   }
-  return false;
-}
-
-export default async function CourseDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  // `params.id` 값을 가져와 숫자로 변환
-  const { id: idString } = await params;
-
-  const id = Number(idString);
-
-  // id가 유효하지 않은 경우 처리
-  if (isNaN(id)) {
-    return notFound(); // 404 페이지로 리다이렉트
-  }
-  const course = await getCourse(id);
 
   if (!course) {
-    return notFound();
+    return notFound(); // If no course is found, return not found
   }
-
-  const isOwner = await getIsOwner(course.userId);
-  //const [course, setCourse] = useState<Course | null>(null);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-32">
       <div className="flex flex-col md:flex-row items-center md:items-start">
-        <img
-          src={`${course.photo}/public`}
+        <Image
+          src={course.photo} // Next.js automatically handles images in the public folder
           alt={course.title}
+          width={500}
+          height={256}
           className="w-full md:w-1/2 h-64 object-cover rounded-lg shadow-lg"
         />
         <div className="md:ml-8 mt-4 md:mt-0">
-          {/* 코스 정보 */}
+          {/* Course information */}
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
             {course.title}
           </h1>
@@ -79,14 +95,14 @@ export default async function CourseDetailPage({
           <p className="text-xl font-semibold text-gray-800 dark:text-white mt-4">
             ${course.price}
           </p>
-          {/* 구매 버튼 */}
+          {/* Purchase button */}
           <Link href={`/courses/${id}/checkout`}>
             <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-500">
               Buy Now
             </button>
           </Link>
 
-          {/* 돌아가기 버튼 */}
+          {/* Back to courses button */}
           <Link
             href="/courses"
             className="mt-6 inline-block text-blue-600 hover:underline"

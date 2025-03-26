@@ -1,27 +1,21 @@
 "use server";
-import {
-  PASSWOR_MIN_LENGTH,
-  PASSWORD_REGEX,
-  PASSWORD_REGEX_ERROR,
-} from "@/lib/constants";
+import { PASSWOR_MIN_LENGTH } from "@/lib/constants";
 import db from "@/lib/db";
 import { z } from "zod";
 import bcrypt from "bcrypt";
-import { getIronSession } from "iron-session";
-import { cookies } from "next/headers";
+
 import { redirect } from "next/navigation";
 import getSession from "@/lib/session";
 
-const passwordRegex = PASSWORD_REGEX;
 const checkUsername = (username: string) => !username.includes("potato");
-const checkPassword = ({
+/*const checkPassword = ({
   password,
   confirm_password,
 }: {
   password: string;
   confirm_password: string;
 }) => password === confirm_password;
-
+*/
 const formSchema = z
   .object({
     username: z
@@ -88,7 +82,7 @@ const formSchema = z
     path: ["confirm_password"],
   });
 
-export async function createAccount(prevState: any, formData: FormData) {
+export async function createAccount(formData: FormData) {
   const data = {
     username: formData.get("username"),
     email: formData.get("email"),

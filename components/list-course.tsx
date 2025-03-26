@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 interface ListCoursetProps {
@@ -58,9 +59,11 @@ export default function ListCourse({
 
       {/* 코스 이미지 */}
       <Link href={`/courses/${id}${hasActivePayment ? "/lecturehall" : ""}`}>
-        <img
-          src={`${photo}/public`}
+        <Image
+          src={`${photo}/public`} // `photo`가 올바른 URL인지 확인 필요
           alt={title}
+          width={300} // 원하는 크기로 설정 (원래 크기에 맞춰 조정)
+          height={224} // max-h-56 (56 * 4px = 224px)
           className="w-full h-auto max-h-56 object-cover rounded-t-lg transition-transform duration-300 transform hover:scale-110"
         />
       </Link>

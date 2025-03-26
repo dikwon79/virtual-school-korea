@@ -9,7 +9,11 @@ import { createAccount } from "./actions";
 import { PASSWOR_MIN_LENGTH } from "@/lib/constants";
 
 export default function CreateAccount() {
-  const [state, action] = useActionState(createAccount, null);
+  const reducer = async (state: unknown, formData: FormData) => {
+    return await createAccount(formData); // createAccount 실행
+  };
+
+  const [state, action] = useActionState(reducer, null);
   const [isClient, setIsClient] = useState(false); // State to ensure client-side rendering
 
   useEffect(() => {

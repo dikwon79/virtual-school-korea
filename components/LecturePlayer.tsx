@@ -28,7 +28,6 @@ export default function LecturePlayer({
   const [selectedLesson, setSelectedLesson] = useState<Lesson>(
     lesson || { id: 0, title: "", videoUrl: "", order: 0 }
   );
-  const [isSidebarVisible, setSidebarVisibility] = useState(true);
 
   return (
     <div className="bg-gray-700 dark:bg-gray-900 min-h-screen relative">

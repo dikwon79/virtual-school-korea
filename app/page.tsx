@@ -8,6 +8,7 @@ import "slick-carousel/slick/slick-theme.css";
 import GetStartedButton from "@/components/mbutton";
 import FeatureGrid from "@/components/FeaturesGrid";
 import CourseList from "@/components/CourseList";
+import Image from "next/image";
 
 interface LectureType {
   id: number;
@@ -73,7 +74,7 @@ export default function Home() {
               <div key={lecture.id} className="px-4">
                 <div className="flex flex-col items-center bg-white shadow-lg rounded-lg h-[250px] relative">
                   {/* Image */}
-                  <img
+                  <Image
                     src={lecture.image}
                     alt={lecture.title}
                     className="w-full h-52 object-fill"

@@ -1,3 +1,5 @@
+import Image from "next/image";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 const Footer = () => {
@@ -14,13 +16,16 @@ const Footer = () => {
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           {/* 로고 및 슬로건 */}
           <div className="mt-8 flex flex-col items-center xl:mt-0">
-            <img
+            <Image
               src="/m-gray.svg"
-              className="mb-8 w-14"
               alt="Virtual School Korea Logo"
+              width={56} // w-14 (14 * 4px = 56px)
+              height={56} // 높이를 명시적으로 지정
+              className="mb-8"
+              priority // 중요한 이미지라면 페이지 로딩 시 우선 로드
             />
             <span className="text-gray-400">
-              Speak louder! That's the way to master Korean.
+              Speak louder! That is the way to master Korean.
             </span>
           </div>
 
@@ -55,52 +60,52 @@ const Footer = () => {
                 </h4>
                 <ul className="mt-4">
                   <li className="mt-4">
-                    <a
+                    <Link
                       className="text-base leading-6 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300"
                       href="/courses"
                     >
                       Courses
-                    </a>
+                    </Link>
                   </li>
                   <li className="mt-4">
-                    <a
+                    <Link
                       className="text-base leading-6 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300"
                       href="/quiz"
                     >
                       QuizQuiz
-                    </a>
+                    </Link>
                   </li>
                   <li className="mt-4">
-                    <a
+                    <Link
                       className="text-base leading-6 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300"
                       href="/reviews"
                     >
                       Reviews
-                    </a>
+                    </Link>
                   </li>
                   <li className="mt-4">
-                    <a
+                    <Link
                       className="text-base leading-6 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300"
                       href="/community"
                     >
                       Community
-                    </a>
+                    </Link>
                   </li>
                   <li className="mt-4">
-                    <a
+                    <Link
                       className="text-base leading-6 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300"
                       href="/faq"
                     >
                       FAQ
-                    </a>
+                    </Link>
                   </li>
                   <li className="mt-4">
-                    <a
+                    <Link
                       className="text-base leading-6 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300"
                       href="/roadmap"
                     >
                       Roadmap
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -112,28 +117,28 @@ const Footer = () => {
                 </h4>
                 <ul className="mt-4">
                   <li>
-                    <a
+                    <Link
                       className="text-base leading-6 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300"
                       href="/policies/terms-and-conditions"
                     >
                       이용약관
-                    </a>
+                    </Link>
                   </li>
                   <li className="mt-4">
-                    <a
+                    <Link
                       className="text-base leading-6 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300"
                       href="/policies/privacy-policy"
                     >
                       개인정보취급방침
-                    </a>
+                    </Link>
                   </li>
                   <li className="mt-4">
-                    <a
+                    <Link
                       className="text-base leading-6 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300"
                       href="/policies/refund-policy"
                     >
                       취소 및 환불정책
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -145,7 +150,7 @@ const Footer = () => {
         <div className="mt-8 border-t border-gray-200 pt-8 dark:border-gray-400 md:flex md:items-center md:justify-between">
           <div className="flex flex-col items-center md:order-2 md:flex-row">
             <div className="order-1 grid grid-cols-4 gap-5 md:order-2">
-              <a
+              <Link
                 rel="noreferrer"
                 href="https://www.instagram.com/"
                 target="_blank"
@@ -164,7 +169,7 @@ const Footer = () => {
                     d="M13.028 2c1.125.003 1.696.009 2.189.023l.194.007c.224.008.445.018.712.03c1.064.05 1.79.218 2.427.465c.66.254 1.216.598 1.772 1.153a4.9 4.9 0 0 1 1.153 1.772c.247.637.415 1.363.465 2.428c.012.266.022.487.03.712l.006.194c.015.492.021 1.063.023 2.188l.001.746v1.31a79 79 0 0 1-.023 2.188l-.006.194c-.008.225-.018.446-.03.712c-.05 1.065-.22 1.79-.466 2.428a4.9 4.9 0 0 1-1.153 1.772a4.9 4.9 0 0 1-1.772 1.153c-.637.247-1.363.415-2.427.465l-.712.03l-.194.006c-.493.014-1.064.021-2.189.023l-.746.001h-1.309a78 78 0 0 1-2.189-.023l-.194-.006a63 63 0 0 1-.712-.031c-1.064-.05-1.79-.218-2.428-.465a4.9 4.9 0 0 1-1.771-1.153a4.9 4.9 0 0 1-1.154-1.772c-.247-.637-.415-1.363-.465-2.428l-.03-.712l-.005-.194A79 79 0 0 1 2 13.028v-2.056a79 79 0 0 1 .022-2.188l.007-.194c.008-.225.018-.446.03-.712c.05-1.065.218-1.79.465-2.428A4.9 4.9 0 0 1 3.68 3.678a4.9 4.9 0 0 1 1.77-1.153c.638-.247 1.363-.415 2.428-.465c.266-.012.488-.022.712-.03l.194-.006a79 79 0 0 1 2.188-.023zM12 7a5 5 0 1 0 0 10a5 5 0 0 0 0-10m0 2a3 3 0 1 1 .001 6a3 3 0 0 1 0-6m5.25-3.5a1.25 1.25 0 0 0 0 2.5a1.25 1.25 0 0 0 0-2.5"
                   ></path>
                 </svg>
-              </a>
+              </Link>
               {/* YouTube, Facebook, GitHub 등 링크 추가 가능 */}
             </div>
           </div>

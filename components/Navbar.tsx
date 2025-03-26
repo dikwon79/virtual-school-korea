@@ -3,19 +3,24 @@
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 
-import { logOut } from "@/app/api/logout/route";
 import { useAuth } from "@/app/(auth)/context/AuthContext";
-import { useRouter } from "next/navigation";
+
 import { usePathname } from "next/navigation";
+import Image from "next/image";
+
+export async function logOut() {
+  const response = await fetch("/api/logout", { method: "POST" });
+  if (response.redirected) {
+    window.location.href = response.url;
+  }
+}
 export default function Header() {
   const { user, loading } = useAuth();
-  const [users, setUser] = useState(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const [hasScrolled, setHasScrolled] = useState(false);
   const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
   const pathname = usePathname(); // ✅ 페이지 변경 감지
   useEffect(() => {
     const handleScroll = () => {
@@ -51,15 +56,22 @@ export default function Header() {
             <div className="flex items-center justify-center sm:items-stretch sm:justify-start">
               <div className="flex flex-shrink-0 items-center">
                 <Link href="/">
-                  <img
+                  <Image
                     className="block h-8 w-auto lg:hidden"
                     src="/m.svg"
                     alt="Logo"
+                    width={32} // 너비 설정 (h-8 = 32px)
+                    height={32} // 높이 설정
+                    priority // 중요한 이미지라면 추가
                   />
-                  <img
+
+                  <Image
                     className="hidden h-8 w-auto lg:block"
                     src="/m.svg"
                     alt="Logo"
+                    width={32}
+                    height={32}
+                    priority
                   />
                 </Link>
               </div>
@@ -92,10 +104,13 @@ export default function Header() {
                   <button
                     onClick={() => setIsAvatarMenuOpen(!isAvatarMenuOpen)}
                   >
-                    <img
+                    <Image
                       className="h-8 w-8 rounded-full"
                       src="/images/members/default-avatar.jpeg"
                       alt="User avatar"
+                      width={32} // h-8 (8 * 4px = 32px)
+                      height={32} // w-8 (8 * 4px = 32px)
+                      priority // 중요한 이미지라면 추가
                     />
                   </button>
                   {isAvatarMenuOpen && (

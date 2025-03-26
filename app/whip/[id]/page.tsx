@@ -1,13 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, notFound } from "next/navigation";
 import { WHIPClient } from "@eyevinn/whip-web-client";
-import { notFound } from "next/navigation";
 
 import ChatMessagesList from "@/components/chat-messages-list";
 import ChatMessagebtn from "@/components/chat-messages-button";
 
+// Augmenting the WHIPClient type to include the `stop` method
+declare module "@eyevinn/whip-web-client" {
+  interface WHIPClient {
+    stop?: () => void; // Assuming `stop` is an optional method
+  }
+}
 const WHIP_URL = `https://customer-yx9m95cz62ztzi3v.cloudflarestream.com/5c4cc7b188a36466d761b353cfc7219ckd7cc0c09c57d687ae6d59025761ebfd9/webRTC/publish`;
 
 type Room = {
@@ -16,6 +21,7 @@ type Room = {
   updated_at: Date;
   users: { id: number }[];
 };
+
 type Message = {
   id: string;
   payload: string;
@@ -26,6 +32,7 @@ type Message = {
     username: string;
   };
 };
+
 type User = {
   id: number;
   username: string;
@@ -33,17 +40,20 @@ type User = {
 } | null;
 
 export default function Broadcast() {
-  const query = useParams(); // Use useRouter to access params
+  const { id } = useParams(); // ✅ useParams()를 직접 구조 분해 할당
   const videoRef = useRef<HTMLVideoElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
+
   const [room, setRoom] = useState<Room | null>(null);
   const [loading, setLoading] = useState(true);
-  const [messages, setMessages] = useState<Message[] | null>(null); // 초기 상태를 null로 설정
+  const [messages, setMessages] = useState<Message[] | null>(null);
   const [user, setUser] = useState<User>(null);
-  // Check if query.id is available before fetching the room data
 
-  if (!query.id) return; // Ensure that query.id is available
-  const roomId = query.id as string; // Ensure TypeScript knows it's a string
+  // ✅ query.id가 없으면 notFound() 호출
+  if (!id) notFound();
+  const roomId = id as string;
 
+  // ✅ 사용자 정보 가져오기
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -61,8 +71,11 @@ export default function Broadcast() {
     fetchUser();
   }, []);
 
+  // ✅ 채팅 메시지 가져오기
   useEffect(() => {
-    const fetchMessages = async (roomId: string) => {
+    if (!roomId) return;
+
+    const fetchMessages = async () => {
       try {
         const res = await fetch(`/api/chatRoom/${roomId}/messages`);
         if (res.ok) {
@@ -76,14 +89,19 @@ export default function Broadcast() {
         console.error("Error fetching messages:", error);
       }
     };
-    fetchMessages(roomId);
-  }, []);
+
+    fetchMessages();
+  }, [roomId]); // ✅ roomId가 변경되면 다시 실행
+
+  // ✅ 방 정보 가져오기
   useEffect(() => {
+    if (!roomId) return;
+
     const fetchRoom = async () => {
       try {
         const res = await fetch(`/api/chatRoom/${roomId}`);
-
         const data = await res.json();
+
         if (res.ok) {
           setRoom(data);
         } else {
@@ -98,16 +116,17 @@ export default function Broadcast() {
     };
 
     fetchRoom();
-  }, [query.id]); // Dependency on query.id
+  }, [roomId]); // ✅ roomId가 변경되면 다시 실행
 
-  const chatContainerRef = useRef<HTMLDivElement | null>(null);
-
+  // ✅ 채팅 스크롤 자동 이동
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop =
         chatContainerRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // ✅ 비디오 스트리밍
   useEffect(() => {
     if (!room) return;
 
@@ -134,7 +153,6 @@ export default function Broadcast() {
         });
 
         await client.ingest(stream);
-        //console.log("Streaming started", videoRef.current);
       } catch (error) {
         console.error("Media access error:", error);
       }
@@ -144,7 +162,7 @@ export default function Broadcast() {
 
     return () => {
       if (client) {
-        (client as any).stop?.();
+        client.stop?.();
       }
       if (stream) {
         stream.getTracks().forEach((track) => track.stop());
@@ -152,18 +170,13 @@ export default function Broadcast() {
     };
   }, [room]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (!room) return <div>Room not found.</div>;
 
-  if (!room) {
-    return <div>Room not found.</div>;
-  }
-  console.log(user);
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 p-6 pt-20">
-      {/* 제목 */}
       <h1 className="text-white text-2xl mb-6">Live Broadcast</h1>
+
       {/* 전체 박스 */}
       <div className="w-full max-w-5xl h-[400px] bg-gray-800 border border-gray-600 rounded-lg flex overflow-hidden">
         {/* 왼쪽: 비디오 영역 */}
@@ -210,12 +223,6 @@ export default function Broadcast() {
                 }
               />
             )}
-
-            {/* <input
-              type="text"
-              placeholder="Type a message..."
-              className="w-full p-2 rounded-lg bg-gray-900 text-white border border-gray-600"
-            /> */}
           </div>
         </div>
       </div>

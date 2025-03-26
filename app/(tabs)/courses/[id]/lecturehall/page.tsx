@@ -1,22 +1,33 @@
-import { notFound } from "next/navigation";
+"use client";
+import { useState, useEffect } from "react";
+import { useParams, notFound } from "next/navigation";
 import db from "@/lib/db";
+import Image from "next/image";
+
+// Define types for the course and lesson
+interface Course {
+  title: string;
+  photo: string;
+}
 
 interface Lesson {
   id: number;
-  title: string;
-  videoUrl: string;
   order: number;
+  title: string;
+  courseId: number;
+  course: Course;
 }
-async function getLesson(courseId: number) {
+
+// Fetch lessons for the given courseId
+async function GetLesson(courseId: number): Promise<Lesson[]> {
   const lessons = await db.lesson.findMany({
-    where: { courseId }, // courseId에 해당하는 모든 Lesson 조회
-    orderBy: { order: "asc" }, // 강의 순서대로 정렬
+    where: { courseId },
+    orderBy: { order: "asc" },
     include: {
       course: {
-        // ✅ Course 정보도 포함
         select: {
-          title: true, // 코스명
-          photo: true, // 코스 이미지 (필드명은 실제 DB 필드명으로 변경)
+          title: true,
+          photo: true,
         },
       },
     },
@@ -24,23 +35,38 @@ async function getLesson(courseId: number) {
   return lessons;
 }
 
-export default async function lecturehall({
-  params,
-}: {
-  params: { id: string };
-}) {
-  // `params.id` 값을 가져와 숫자로 변환
-  const { id: idString } = await params;
+export default function Lecturehall() {
+  const [lessons, setLessons] = useState<Lesson[]>([]); // State to store lessons
+  const [loading, setLoading] = useState<boolean>(true); // Loading state
+  const [courseInfo, setCourseInfo] = useState<Course | null>(null); // State to store course info
+  const query = useParams(); // Get route parameters
+  const id = Number(query.id); // Convert 'id' from string to number
 
-  const id = Number(idString);
+  // Fetch lessons when component mounts or id changes
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isNaN(id)) {
+        notFound(); // If 'id' is invalid, return not found
+        return;
+      }
 
-  const courseId = Number(id);
-  console.log(courseId);
-  const lessons = await getLesson(Number(courseId));
-  const courseInfo = lessons[0].course;
+      const lessonsData = await GetLesson(id);
+      if (lessonsData.length === 0) {
+        notFound(); // If no lessons found, return not found
+      } else {
+        setLessons(lessonsData);
+        setCourseInfo(lessonsData[0].course); // Set course info from the first lesson
+      }
+      setLoading(false); // Set loading to false after fetching data
+    };
 
-  if (!lessons) {
-    return notFound();
+    fetchData();
+  }, [id]); // Re-run when id changes
+
+  if (loading) return <div>Loading...</div>; // Show loading state
+
+  if (!lessons || lessons.length === 0) {
+    return notFound(); // If no lessons, return not found
   }
 
   return (
@@ -49,9 +75,11 @@ export default async function lecturehall({
         강의 수강
       </h2>
       <div className="mt-10 flex flex-col md:flex-row items-start">
-        <img
-          src={`${courseInfo.photo}/public`}
-          alt={courseInfo.title}
+        <Image
+          src={courseInfo?.photo || "/default-image.jpg"} // Fallback to a default image if courseInfo is null
+          alt={courseInfo?.title || "Course Title"}
+          width={500}
+          height={256}
           className="w-full md:w-1/2 h-64 object-cover rounded-lg shadow-lg"
         />
         <div className="w-full md:ml-8 mt-4 md:mt-0 bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">

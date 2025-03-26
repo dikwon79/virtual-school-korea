@@ -1,9 +1,29 @@
+"use client";
+
 import db from "@/lib/db";
-import getSession from "@/lib/session";
+
 import { UserIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-async function getStream(id: number) {
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+
+// Define the types for stream and user
+interface User {
+  avatar: string | null;
+  username: string;
+}
+
+interface Stream {
+  title: string;
+  stream_key: string;
+  stream_id: string;
+  userId: number;
+  user: User;
+}
+
+// Fetch stream data
+async function getStream(id: number): Promise<Stream | null> {
   const stream = await db.liveStream.findUnique({
     where: {
       id,
@@ -23,22 +43,40 @@ async function getStream(id: number) {
   });
   return stream;
 }
-export default async function StreamDetail({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const id = Number(params.id); // No need to await params.id
 
-  if (isNaN(id)) {
-    return notFound();
+export default function StreamDetail() {
+  const query = useParams();
+  const id = Number(query.id); // Convert 'id' from string to number
+
+  // Explicitly typing state
+  const [stream, setStream] = useState<Stream | null>(null);
+  const [session, setSession] = useState<{ id?: number } | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isNaN(id)) {
+        return notFound();
+      }
+
+      const streamData = await getStream(id);
+      if (!streamData) {
+        return notFound();
+      }
+      setStream(streamData);
+
+      // Fetch user session from the API
+      const userResponse = await fetch("/api/user");
+      const userData = await userResponse.json();
+      setSession(userData);
+    };
+
+    fetchData();
+  }, [id]);
+
+  if (!stream || !session) {
+    return <div>Loading...</div>; // Or handle loading state appropriately
   }
 
-  const stream = await getStream(id);
-  if (!stream) {
-    return notFound();
-  }
-  const session = await getSession();
   return (
     <div className="p-32">
       <div className="relative aspect-video">

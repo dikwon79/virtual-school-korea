@@ -1,15 +1,15 @@
 import ListCourse from "@/components/list-course";
 import db from "@/lib/db";
 
-interface Course {
-  id: number;
-  title: string;
-  price: number;
-  image: string;
-  description: string;
-  level: "초급" | "중급" | "고급";
-  tag?: string;
-}
+// interface Course {
+//   id: number;
+//   title: string;
+//   price: number;
+//   image: string;
+//   description: string;
+//   level: "초급" | "중급" | "고급";
+//   tag?: string;
+// }
 
 async function getCourses() {
   const courses = await db.course.findMany({

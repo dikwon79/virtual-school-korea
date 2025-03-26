@@ -1,5 +1,5 @@
 "use server";
-import { PASSWOR_MIN_LENGTH, PASSWORD_REGEX } from "@/lib/constants";
+
 import db from "@/lib/db";
 import { z } from "zod";
 import bcrypt from "bcrypt";
@@ -30,7 +30,8 @@ const formSchema = z.object({
   //.min(PASSWOR_MIN_LENGTH)
   //.regex(PASSWORD_REGEX),
 });
-export async function login(prevState: any, formData: FormData) {
+
+export async function login(prevState: unknown, formData: FormData) {
   //await new Promise((resolve) => setTimeout(resolve, 5000));
   const data = {
     email: formData.get("email"),

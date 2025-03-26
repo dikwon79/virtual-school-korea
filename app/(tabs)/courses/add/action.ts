@@ -1,8 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import fs from "fs/promises";
-import path from "path"; // 📌 파일 경로 설정을 위한 모듈
+
 import db from "@/lib/db";
 import getSession from "@/lib/session";
 import { redirect } from "next/navigation";
@@ -24,7 +23,7 @@ const courseSchema = z.object({
     .min(1, { message: "At least one lesson is required" }),
 });
 
-export async function uploadProduct(_: any, formData: FormData) {
+export async function uploadProduct(_: unknown, formData: FormData) {
   const lessonCount = parseInt(formData.get("lessonCount") as string, 10) || 0;
 
   // 📌 4. 레슨 데이터 가져오기

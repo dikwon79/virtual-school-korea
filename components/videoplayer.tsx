@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef } from "react";
-
+import WHEPClient from "../lib/whepClient"; // WHEPClient가 export된 경우
 interface VideoPlayerProps {
   webRtcUrl: string;
 }
@@ -14,11 +14,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ webRtcUrl }) => {
     console.log(videoRef);
   };
   useEffect(() => {
-    let client: any;
+    let client: WHEPClient | null = null; // 타입 명시
 
     const loadWHEPClient = async () => {
       // Dynamically import WHEPClient
-      const { default: WHEPClient } = await import("../lib/whepClient");
+      //const { default: WHEPClient } = await import("../lib/whepClient");
       const videoElement = videoRef.current;
 
       if (videoElement && webRtcUrl) {

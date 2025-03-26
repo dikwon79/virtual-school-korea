@@ -1,6 +1,6 @@
 "use client"; // 클라이언트 컴포넌트로 선언
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 
 interface Course {

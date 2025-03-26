@@ -4,7 +4,7 @@ import getSession from "@/lib/session";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 const title = z.string();
-export async function startStream(_: any, formData: FormData) {
+export async function startStream(_: unknown, formData: FormData) {
   const results = title.safeParse(formData.get("title"));
   if (!results.success) {
     return results.error.flatten();

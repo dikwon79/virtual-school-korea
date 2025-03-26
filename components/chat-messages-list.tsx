@@ -1,7 +1,6 @@
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+
 import { formatToTimeAgo } from "@/lib/utils";
-import { createClient, RealtimeChannel } from "@supabase/supabase-js";
 
 type Message = {
   id: string;
@@ -23,8 +22,6 @@ type ChatMessageListProps = {
 export default function ChatMessagesList({
   messages,
   userId,
-  username,
-  avatar,
 }: ChatMessageListProps) {
   console.log("component", messages);
 
