@@ -1,6 +1,6 @@
 "use server";
 import { PASSWOR_MIN_LENGTH } from "@/lib/constants";
-import db from "@/lib/db";
+import db from "@/lib/prisma";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 

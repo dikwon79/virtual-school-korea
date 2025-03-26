@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react"; // Import useState and useEffect
 import Link from "next/link";
-import db from "@/lib/db";
+import db from "@/lib/prisma";
 import Image from "next/image";
 interface Course {
   id: number;

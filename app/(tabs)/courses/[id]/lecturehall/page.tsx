@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useParams, notFound } from "next/navigation";
-import db from "@/lib/db";
+import db from "@/lib/prisma";
 import Image from "next/image";
 
 // Define types for the course and lesson

@@ -1,6 +1,6 @@
 "use server";
 
-import db from "@/lib/db";
+import db from "@/lib/prisma";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import getSession from "@/lib/session";

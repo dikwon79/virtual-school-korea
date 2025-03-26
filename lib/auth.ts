@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import db from "./db";
+import db from "./prisma";
 import getSession from "./session";
 
 export async function getUser() {

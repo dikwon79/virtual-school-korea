@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 
-import db from "@/lib/db";
+import db from "@/lib/prisma";
 import getSession from "@/lib/session";
 import { redirect } from "next/navigation";
 
