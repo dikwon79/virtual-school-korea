@@ -9,7 +9,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ webRtcUrl }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const unmuteVideo = () => {
     if (videoRef.current) {
-      videoRef.current.muted = true; // 음소거 해제
+      videoRef.current.muted = false; // 음소거 해제
     }
     console.log(videoRef);
   };
@@ -43,7 +43,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ webRtcUrl }) => {
       <video
         ref={videoRef}
         autoPlay
-        muted
         playsInline
         className="border border-gray-300 rounded-lg"
       ></video>
