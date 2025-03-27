@@ -51,7 +51,6 @@ export default function CourseDetailPage() {
     const fetchCourse = async () => {
       if (isNaN(id)) {
         notFound(); // If 'id' is invalid, return not found
-        return;
       }
 
       const courseData = await getCourse(id);
