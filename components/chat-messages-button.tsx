@@ -8,8 +8,6 @@ const SUPABASE_PUBLIC_KEY =
 const SUPABASE_URL = "https://cmhagpcoyvggurkkfzrq.supabase.co";
 
 type SupabasePayload = {
-  type: "broadcast";
-  event: "message";
   payload: ChatMessage;
 };
 type ChatMessage = {
@@ -58,7 +56,7 @@ export default function ChatMessagebtn({
     channel.current = client.channel(`room-${chatRoomId}`);
 
     channel.current
-      .on("system", { event: "message" }, handleReceiveMessage)
+      .on("broadcast", { event: "message" }, handleReceiveMessage)
       .subscribe();
     return () => {
       channel.current?.unsubscribe();
