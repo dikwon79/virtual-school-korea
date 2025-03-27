@@ -47,6 +47,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ webRtcUrl }) => {
         autoPlay
         playsInline
         muted={isMuted} // 초기 음소거 상태 설정
+        width="200"
+        height="200"
         className="border border-gray-300 rounded-lg"
       />
       <button
