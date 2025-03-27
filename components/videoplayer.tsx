@@ -30,6 +30,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ webRtcUrl }) => {
         });
 
         const mediaStream = videoElement.srcObject;
+        console.log("mediaStream:", mediaStream);
 
         // mediaStream이 MediaStream 타입인지 확인
         if (mediaStream instanceof MediaStream) {
