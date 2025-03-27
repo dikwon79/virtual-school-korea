@@ -55,7 +55,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ webRtcUrl }) => {
         playsInline
         muted={isMuted}
         width="400"
-        height="400"
+        height="200"
         className="border border-gray-300 rounded-lg"
       />
       <button
