@@ -111,13 +111,15 @@ export default function Whep() {
   console.log(loading);
   console.log(room);
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 p-6 pt-20">
+    <div className="flex flex-col md:flex-row items-center justify-center min-h-screen bg-gray-900 p-6 pt-20">
       <h1 className="text-white text-2xl mb-6">Live Broadcast</h1>
-      <div className="w-full max-w-5xl h-[400px] bg-gray-800 border border-gray-600 rounded-lg flex overflow-hidden">
-        <div className="w-1/2 flex flex-col items-center justify-center p-4 border-r border-gray-600">
+      <div className="w-full max-w-5xl h-auto md:h-[400px] bg-gray-800 border border-gray-600 rounded-lg flex flex-col md:flex-row overflow-hidden">
+        {/* 비디오 영역 */}
+        <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-4 border-b md:border-b-0 md:border-r border-gray-600">
           <VideoPlayer webRtcUrl={webRtcUrl} />
         </div>
-        <div className="w-1/2 flex flex-col p-4">
+        {/* 채팅 영역 */}
+        <div className="w-full md:w-1/2 flex flex-col p-4">
           <div
             ref={chatContainerRef}
             className="flex-1 bg-gray-700 p-4 rounded-lg overflow-y-auto border border-gray-600 h-[450px]"
@@ -135,6 +137,7 @@ export default function Whep() {
               )
             )}
           </div>
+          {/* 채팅 입력 */}
           <div className="mt-4">
             {user && (
               <ChatMessagebtn
