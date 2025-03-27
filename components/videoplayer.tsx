@@ -28,6 +28,20 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ webRtcUrl }) => {
         await videoElement.play().catch((error) => {
           console.error("비디오 자동 재생 실패:", error);
         });
+
+        const mediaStream = videoElement.srcObject;
+
+        // mediaStream이 MediaStream 타입인지 확인
+        if (mediaStream instanceof MediaStream) {
+          const audioTracks = mediaStream.getAudioTracks();
+          if (audioTracks.length > 0) {
+            console.log("오디오 트랙이 있습니다:", audioTracks[0]);
+          } else {
+            console.log("오디오 트랙이 없습니다.");
+          }
+        } else {
+          console.log("스트림은 MediaStream이 아닙니다.");
+        }
       }
     };
 
@@ -47,8 +61,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ webRtcUrl }) => {
         autoPlay
         playsInline
         muted={isMuted} // 초기 음소거 상태 설정
-        width="200"
-        height="200"
+        width="400"
+        height="400"
         className="border border-gray-300 rounded-lg"
       />
       <button
