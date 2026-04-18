@@ -1,88 +1,96 @@
-"use client";
-import Image from "next/image";
+import Link from "next/link";
 
-type Course = {
-  id: number;
-  title: string;
-  duration: string;
-  startDate: string;
-  applicants: number;
-  imageSrc: string;
-};
-
-const courses: Course[] = [
+const stages = [
   {
-    id: 1,
-    title: "생활한국어",
-    duration: "4주 완성",
-    startDate: "D-5",
-    applicants: 33,
-    imageSrc: "/course1.jpg",
+    age: "0—3세",
+    stage: "듣기 환경",
+    goal: "소리로 영어에 익숙해지는 시기",
+    color: "var(--accent)",
+    activities: [
+      "영어 동요·마더구스 매일 1시간",
+      "보드북·터치북으로 엄마와 읽기",
+      "영상 노출은 최소, 소리 중심",
+    ],
   },
   {
-    id: 2,
-    title: "어휘보카",
-    duration: "2주 완성",
-    startDate: "D-10",
-    applicants: 21,
-    imageSrc: "/course2.jpg",
+    age: "4—5세",
+    stage: "반응기",
+    goal: "문장 단위로 반응하고 따라하는 시기",
+    color: "var(--sage)",
+    activities: [
+      "JYP·ORT 1-2단계 함께 읽기",
+      "흘려듣기 2시간 · 집중듣기 30분",
+      "생활 속 짧은 영어 대화 시작",
+    ],
   },
   {
-    id: 3,
-    title: "매일읽기",
-    duration: "4주 완성",
-    startDate: "D-15",
-    applicants: 45,
-    imageSrc: "/course3.jpg",
+    age: "6—7세",
+    stage: "발화 확장",
+    goal: "자기 말로 영어를 꺼내는 시기",
+    color: "var(--mustard)",
+    activities: [
+      "ORT 3-6단계, 챕터북 진입",
+      "영어 영상·게임으로 자발적 몰입",
+      "쓰기 시작, 워크북 주 2회",
+    ],
   },
 ];
 
-const CourseCard = ({ course }: { course: Course }) => {
+export default function CourseList() {
   return (
-    <div className="bg-[#374151] shadow-lg rounded-lg overflow-hidden w-full">
-      <div className="p-4">
-        <div className="mb-12 flex flex-wrap items-center justify-between">
-          <h5 className="whitespace-nowrap text-2xl font-medium text-white">
-            {course.title}
-          </h5>
-          <div className="flex items-center text-sm font-medium">
-            <span className="mr-5 whitespace-nowrap rounded-full bg-blue-500 px-2 py-px text-white">
-              {course.duration}
-            </span>
-            <span className="text-red-500 whitespace-nowrap font-medium">
-              {course.startDate}
-            </span>
+    <div className="border-t hairline">
+      {stages.map((s, idx) => (
+        <div
+          key={s.age}
+          className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 py-12 border-b hairline items-start"
+        >
+          <div className="md:col-span-3 flex items-start gap-4">
+            <div
+              className="w-2 h-16 mt-2 flex-shrink-0"
+              style={{ background: s.color }}
+            />
+            <div>
+              <div className="font-mono text-sm text-[color:var(--muted)]">
+                단계 {String(idx + 1).padStart(2, "0")}
+              </div>
+              <div className="mt-2 text-4xl md:text-5xl font-bold ink tracking-tight">
+                {s.age}
+              </div>
+            </div>
+          </div>
+
+          <div className="md:col-span-5">
+            <h3 className="text-2xl md:text-3xl font-bold ink">{s.stage}</h3>
+            <p className="mt-3 body-text text-[15px] leading-relaxed">
+              {s.goal}
+            </p>
+          </div>
+
+          <div className="md:col-span-4">
+            <ul className="space-y-2.5">
+              {s.activities.map((a) => (
+                <li key={a} className="flex gap-3 text-[15px] body-text">
+                  <span
+                    className="flex-shrink-0 mt-2 w-1.5 h-1.5 rounded-full"
+                    style={{ background: s.color }}
+                  />
+                  <span>{a}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
-        <Image
-          className="w-full h-20 object-cover"
-          src={course.imageSrc}
-          alt={course.title}
-          width={48}
-          height={48}
-        />
-        <div className="flex justify-between mt-2">
-          <span className="text-gray-500">신청자 {course.applicants}명</span>
-          <a href="#" className="text-blue-500">
-            자세히 보기 →
-          </a>
-        </div>
+      ))}
+
+      <div className="py-12 flex justify-center">
+        <Link
+          href="/courses"
+          className="text-sm font-medium ink border-b pb-1 no-underline transition-colors"
+          style={{ borderColor: "var(--accent)" }}
+        >
+          전체 프로그램 보기 →
+        </Link>
       </div>
     </div>
   );
-};
-
-const CourseList = () => {
-  return (
-    <div className="w-full mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">Available Courses</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {courses.map((course) => (
-          <CourseCard key={course.id} course={course} />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default CourseList;
+}

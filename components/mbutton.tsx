@@ -1,27 +1,25 @@
+"use client";
+
 import styled from "styled-components";
 
-const ButtonWrapper = styled.a<{ color?: string; width?: string }>`
+const ButtonWrapper = styled.a<{ $color?: string; $width?: string }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: ${(props) => props.width};
+  width: ${(props) => props.$width || "auto"};
   padding: 12px 24px;
   font-size: 16px;
   font-weight: bold;
   text-decoration: none;
   color: #fff;
   border: 2px solid white;
-  background-color: ${(props) =>
-    props.color || "#121117"}; /* Default color is #121117 */
+  background-color: ${(props) => props.$color || "#121117"};
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.3s;
 
   &:hover {
-    background-color: ${(props) =>
-      props.color
-        ? "#2c2a38"
-        : "#2c2a38"}; /* You can customize hover color too */
+    background-color: #2c2a38;
   }
 `;
 
@@ -38,10 +36,10 @@ const Icon = styled.span`
 
 interface GetStartedButtonProps {
   className?: string;
-  href: string; // href is required now
-  color?: string; // color is an optional prop to change the button color
-  width?: string; // width is an optional prop to change the button width
-  title: string; // title is the new prop for the button text
+  href: string;
+  color?: string;
+  width?: string;
+  title: string;
 }
 
 const GetStartedButton: React.FC<GetStartedButtonProps> = ({
@@ -49,16 +47,16 @@ const GetStartedButton: React.FC<GetStartedButtonProps> = ({
   href,
   color,
   width,
-  title, // Destructure title from props
+  title,
 }) => {
   return (
     <ButtonWrapper
       className={className}
       href={href}
-      color={color}
-      width={width}
+      $color={color}
+      $width={width}
     >
-      {title} {/* Use the title prop here */}
+      {title}
       <Icon>
         <svg
           xmlns="http://www.w3.org/2000/svg"

@@ -1,26 +1,10 @@
-"use client";
-import { useState, useEffect } from "react";
-import { useParams, notFound } from "next/navigation";
-import db from "@/lib/prisma";
+import { notFound } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
+import db from "@/lib/prisma";
 
-// Define types for the course and lesson
-interface Course {
-  title: string;
-  photo: string;
-}
-
-interface Lesson {
-  id: number;
-  order: number;
-  title: string;
-  courseId: number;
-  course: Course;
-}
-
-// Fetch lessons for the given courseId
-async function GetLesson(courseId: number): Promise<Lesson[]> {
-  const lessons = await db.lesson.findMany({
+async function getLessons(courseId: number) {
+  return db.lesson.findMany({
     where: { courseId },
     orderBy: { order: "asc" },
     include: {
@@ -32,42 +16,22 @@ async function GetLesson(courseId: number): Promise<Lesson[]> {
       },
     },
   });
-  return lessons;
 }
 
-export default function Lecturehall() {
-  const [lessons, setLessons] = useState<Lesson[]>([]); // State to store lessons
-  const [loading, setLoading] = useState<boolean>(true); // Loading state
-  const [courseInfo, setCourseInfo] = useState<Course | null>(null); // State to store course info
-  const query = useParams(); // Get route parameters
-  const id = Number(query.id); // Convert 'id' from string to number
+export default async function Lecturehall({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id: idParam } = await params;
+  const id = Number(idParam);
 
-  // Fetch lessons when component mounts or id changes
-  useEffect(() => {
-    const fetchData = async () => {
-      if (isNaN(id)) {
-        notFound(); // If 'id' is invalid, return not found
-        return;
-      }
+  if (Number.isNaN(id)) notFound();
 
-      const lessonsData = await GetLesson(id);
-      if (lessonsData.length === 0) {
-        notFound(); // If no lessons found, return not found
-      } else {
-        setLessons(lessonsData);
-        setCourseInfo(lessonsData[0].course); // Set course info from the first lesson
-      }
-      setLoading(false); // Set loading to false after fetching data
-    };
+  const lessons = await getLessons(id);
+  if (lessons.length === 0) notFound();
 
-    fetchData();
-  }, [id]); // Re-run when id changes
-
-  if (loading) return <div>Loading...</div>; // Show loading state
-
-  if (!lessons || lessons.length === 0) {
-    return notFound(); // If no lessons, return not found
-  }
+  const courseInfo = lessons[0].course;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-32">
@@ -76,8 +40,8 @@ export default function Lecturehall() {
       </h2>
       <div className="mt-10 flex flex-col md:flex-row items-start">
         <Image
-          src={courseInfo?.photo || "/default-image.jpg"} // Fallback to a default image if courseInfo is null
-          alt={courseInfo?.title || "Course Title"}
+          src={courseInfo.photo || "/images/lecture1.webp"}
+          alt={courseInfo.title}
           width={500}
           height={256}
           className="w-full md:w-1/2 h-64 object-cover rounded-lg shadow-lg"
@@ -85,30 +49,26 @@ export default function Lecturehall() {
         <div className="w-full md:ml-8 mt-4 md:mt-0 bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
           <div className="min-w-full">
             {lessons.map((lesson, index) => (
-              <button
+              <div
                 key={lesson.id}
-                className={`focus:outline-none cursor-pointer focus:ring focus:ring-blue-400 flex h-full w-full justify-between 
-                  ${
-                    index % 2 === 0
-                      ? "bg-gray-50 dark:bg-slate-700"
-                      : "bg-white dark:bg-slate-500"
-                  }`}
+                className={`flex h-full w-full justify-between ${
+                  index % 2 === 0
+                    ? "bg-gray-50 dark:bg-slate-700"
+                    : "bg-white dark:bg-slate-500"
+                }`}
               >
-                {/* 강의 정보 */}
                 <span className="flex items-center overflow-hidden whitespace-nowrap px-6 py-4 text-sm font-medium leading-5 text-gray-900 dark:text-white">
                   #{lesson.order} {lesson.title}
                 </span>
-
-                {/* 강의 링크 */}
                 <span className="hidden whitespace-nowrap px-6 py-4 text-right text-sm font-medium leading-5 md:block">
-                  <a
+                  <Link
                     className="hover:text-blue-900 text-blue-600 dark:text-blue-200 dark:hover:text-white"
-                    href={`./lectures/${lesson.id}`}
+                    href={`/courses/${id}/lectures/${lesson.id}`}
                   >
                     수강하기 →
-                  </a>
+                  </Link>
                 </span>
-              </button>
+              </div>
             ))}
           </div>
         </div>

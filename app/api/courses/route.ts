@@ -1,7 +1,5 @@
-// app/api/courses/route.ts
-
 import { NextResponse } from "next/server";
-import db from "@/lib/db";
+import db from "@/lib/prisma";
 
 export async function GET() {
   try {
@@ -25,6 +23,9 @@ export async function GET() {
     return NextResponse.json(courses);
   } catch (error) {
     console.error("Error fetching courses:", error);
-    return NextResponse.error();
+    return NextResponse.json(
+      { error: "Failed to fetch courses" },
+      { status: 500 }
+    );
   }
 }

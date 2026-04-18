@@ -1,52 +1,28 @@
-"use client";
-
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata } from "next";
 import "./globals.css";
 
-import { usePathname } from "next/navigation";
-import Header from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { AuthProvider } from "@/app/(auth)/context/AuthContext";
+import StyledComponentsRegistry from "@/lib/StyledComponentsRegistry";
+import LayoutShell from "@/components/LayoutShell";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+export const metadata: Metadata = {
+  title: "엄마표 영어 · 원어민 만들기",
+  description: "7살 이전, 집에서 시작하는 영어 노출 프로그램",
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pathname = usePathname();
-
-  const isHomePage = pathname === "/";
-  const isInLectures =
-    pathname.split("/").includes("lectures") && pathname.split("/").length > 4;
-  console.log(isInLectures);
-
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${
-          geistMono.variable
-        } antialiased fullscreen-bg  ${
-          isHomePage
-            ? "bg-[url('/images/main1.png')]  bg-cover h-screen"
-            : "bg-[#111827] bg-cover h-screen"
-        }`}
-      >
-        <AuthProvider>
-          {!isInLectures && <Header />}
-
-          <div className="w-full">{children}</div>
-          {!isInLectures && <Footer />}
-        </AuthProvider>
+    <html lang="ko">
+      <body className="antialiased min-h-screen">
+        <StyledComponentsRegistry>
+          <AuthProvider>
+            <LayoutShell>{children}</LayoutShell>
+          </AuthProvider>
+        </StyledComponentsRegistry>
       </body>
     </html>
   );

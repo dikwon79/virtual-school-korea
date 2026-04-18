@@ -2,9 +2,7 @@
 
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-
 import { useAuth } from "@/app/(auth)/context/AuthContext";
-
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 
@@ -14,142 +12,107 @@ export async function logOut() {
     window.location.href = response.url;
   }
 }
+
+const NAV_ITEMS = [
+  { label: "프로그램", href: "/courses" },
+  { label: "커리큘럼", href: "/#curriculum" },
+  { label: "후기", href: "/#stories" },
+  { label: "자주 묻는 질문", href: "/#faq" },
+];
+
 export default function Header() {
   const { user, loading } = useAuth();
-
-  const [hasScrolled, setHasScrolled] = useState(false);
   const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
 
-  const pathname = usePathname(); // ✅ 페이지 변경 감지
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 64) {
-        setHasScrolled(true);
-      } else {
-        setHasScrolled(false);
-      }
-    };
+  useEffect(() => {}, [pathname]);
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    console.log("router", user);
-  }, [user, pathname]); // ✅ URL이 변경될 때도 실행되도록 설정
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  if (loading) return null;
 
   return (
-    <header
-      className={`z-[100] w-full fixed top-0 transition-colors duration-300 ${
-        hasScrolled ? "bg-black" : "bg-transparent"
-      }`}
-    >
-      <nav>
-        <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-          <div className="relative flex h-16 justify-between">
-            {/* Logo */}
-            <div className="flex items-center justify-center sm:items-stretch sm:justify-start">
-              <div className="flex flex-shrink-0 items-center">
-                <Link href="/">
-                  <Image
-                    className="block h-8 w-auto lg:hidden"
-                    src="/m.svg"
-                    alt="Logo"
-                    width={32} // 너비 설정 (h-8 = 32px)
-                    height={32} // 높이 설정
-                    priority // 중요한 이미지라면 추가
-                  />
+    <header className="sticky top-0 z-50 bg-[color:var(--bg)]/85 backdrop-blur-md border-b hairline">
+      <nav className="container-wide">
+        <div className="flex h-16 items-center justify-between">
+          <Link
+            href="/"
+            className="flex items-center gap-2.5 no-underline"
+          >
+            <Image
+              src="/logo.svg"
+              alt="Virtual School"
+              width={28}
+              height={28}
+              priority
+            />
+            <span className="text-base font-semibold ink tracking-tight">
+              Virtual School
+            </span>
+          </Link>
 
+          <div className="hidden md:flex items-center gap-10">
+            {NAV_ITEMS.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="text-sm body-text hover:ink transition-colors no-underline"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-3">
+            {user?.username ? (
+              <div className="relative">
+                <button
+                  onClick={() => setIsAvatarMenuOpen(!isAvatarMenuOpen)}
+                  className="flex items-center gap-2"
+                >
                   <Image
-                    className="hidden h-8 w-auto lg:block"
-                    src="/m.svg"
-                    alt="Logo"
+                    className="h-8 w-8 rounded-full"
+                    src="/images/members/default-avatar.jpeg"
+                    alt="User avatar"
                     width={32}
                     height={32}
-                    priority
                   />
-                </Link>
-              </div>
-            </div>
-
-            {/* Navigation Links */}
-            <div className="hidden sm:flex sm:ml-6 sm:space-x-8 sm:items-center sm:h-full">
-              {[
-                "Courses",
-                "Quiz",
-                "Reviews",
-                "Community",
-                "FAQ",
-                "Roadmap",
-              ].map((item) => (
-                <Link
-                  key={item}
-                  href={`/${item.toLowerCase()}`}
-                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                >
-                  {item}
-                </Link>
-              ))}
-            </div>
-
-            {/* Login / Profile */}
-            <div className="ml-auto flex items-center">
-              {user?.username ? (
-                <div className="relative flex items-center">
-                  <button
-                    onClick={() => setIsAvatarMenuOpen(!isAvatarMenuOpen)}
+                </button>
+                {isAvatarMenuOpen && (
+                  <div
+                    ref={dropdownRef}
+                    className="absolute right-0 top-12 w-44 bg-white border hairline shadow-sm"
                   >
-                    <Image
-                      className="h-8 w-8 rounded-full"
-                      src="/images/members/default-avatar.jpeg"
-                      alt="User avatar"
-                      width={32} // h-8 (8 * 4px = 32px)
-                      height={32} // w-8 (8 * 4px = 32px)
-                      priority // 중요한 이미지라면 추가
-                    />
-                  </button>
-                  {isAvatarMenuOpen && (
-                    <div
-                      ref={dropdownRef}
-                      className="absolute right-0 top-12 z-50 mt-2 w-48 bg-white shadow-lg"
+                    <Link
+                      href="/dashboard"
+                      className="block px-4 py-2.5 text-sm body-text hover:bg-[color:var(--bg)] no-underline"
                     >
-                      <Link
-                        href="/dashboard"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        Dashboard
-                      </Link>
-                      <button
-                        onClick={logOut}
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        Sign out
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <>
-                  <Link
-                    href="/login"
-                    className="mr-8 text-gray-500 hover:text-gray-700"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    href="/join"
-                    className="bg-blue-600 px-8 py-2 text-white rounded-md hover:bg-blue-500"
-                  >
-                    Join
-                  </Link>
-                </>
-              )}
-            </div>
+                      대시보드
+                    </Link>
+                    <button
+                      onClick={logOut}
+                      className="block w-full text-left px-4 py-2.5 text-sm body-text hover:bg-[color:var(--bg)]"
+                    >
+                      로그아웃
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="text-sm body-text hover:ink no-underline hidden sm:inline"
+                >
+                  로그인
+                </Link>
+                <Link
+                  href="/join"
+                  className="text-sm font-medium text-white bg-[color:var(--ink)] px-4 py-2 no-underline hover:opacity-90 transition-opacity"
+                >
+                  시작하기
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </nav>

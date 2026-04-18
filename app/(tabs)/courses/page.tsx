@@ -21,7 +21,8 @@ export default function CoursesPage() {
   useEffect(() => {
     async function fetchCourses() {
       try {
-        const res = await fetch("api/courses"); // API 호출
+        const res = await fetch("/api/courses");
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         setCourses(data);
       } catch (error) {
